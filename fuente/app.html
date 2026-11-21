@@ -1,0 +1,970 @@
+<title>Piano Curso</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&family=Inter:wght@400;500;600;700&family=Noto+Music&display=swap">
+<style>
+/* Layout: app de una columna (máx. 720px) con barra de pestañas fija abajo; cada ruta con su degradado */
+:root {
+  --bg: #f4f3fb; --surface: #ffffff; --surface-2: #ecebf6; --fg: #1d1b2e; --muted: #67647e; --line: #d9d7ea;
+  --accent: #5856d6; --ok: #2fb35a; --warn: #ff9500; --key-white: #ffffff; --key-black: #1d1b2e; --key-line: #2b2940;
+  --shadow: 0 8px 24px rgba(40, 30, 90, .12);
+  --font-display: "Nunito", "SF Pro Rounded", ui-rounded, system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-music: "Noto Music", "Bravura", "Apple Symbols", "Segoe UI Symbol", serif;
+  --tabbar-h: 64px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #13121c; --surface: #1e1d2b; --surface-2: #2a2939; --fg: #f1f0fa; --muted: #a5a2bd; --line: #3a384e;
+  --accent: #8e8cf5; --ok: #45d070; --warn: #ffb340; --key-white: #f4f3f8; --key-black: #0b0a12; --key-line: #0b0a12;
+  --shadow: 0 8px 24px rgba(0, 0, 0, .4); color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #13121c; --surface: #1e1d2b; --surface-2: #2a2939; --fg: #f1f0fa; --muted: #a5a2bd; --line: #3a384e;
+  --accent: #8e8cf5; --ok: #45d070; --warn: #ffb340; --key-white: #f4f3f8; --key-black: #0b0a12; --key-line: #0b0a12;
+  --shadow: 0 8px 24px rgba(0, 0, 0, .4); color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.45; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+button, select, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+a { color: var(--accent); }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: 2.1rem; font-weight: 900; }
+h2 { font-size: 1.4rem; font-weight: 800; }
+h3 { font-size: 1.1rem; font-weight: 800; }
+.num { font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+.small { font-size: .82rem; }
+.tiny { font-size: .74rem; }
+
+main { max-width: 720px; margin: 0 auto; padding-block: 16px calc(var(--tabbar-h) + 32px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; flex-direction: column; gap: 16px; }
+.topbar { display: flex; align-items: center; gap: 10px; min-height: 36px; }
+.back { border: 0; background: var(--surface-2); border-radius: 999px; padding: 6px 14px; font-weight: 600; }
+.topbar h2 { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row { display: flex; align-items: center; gap: 10px; }
+.row.wrap { flex-wrap: wrap; }
+.spacer { flex: 1; }
+.stack { display: flex; flex-direction: column; gap: 10px; }
+
+/* Pestañas */
+nav.tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: var(--surface); border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom, 0px); padding-left: max(8px, env(safe-area-inset-left, 0px)); padding-right: max(8px, env(safe-area-inset-right, 0px)); }
+nav.tabs .in { max-width: 720px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); height: var(--tabbar-h); }
+nav.tabs a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: var(--muted); font-size: .74rem; font-weight: 600; }
+nav.tabs a svg { width: 24px; height: 24px; }
+nav.tabs a.on { color: var(--accent); }
+
+/* Superficies */
+.card { border-radius: 20px; padding: 16px; background: color-mix(in srgb, var(--tint, var(--accent)) 11%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--tint, var(--accent)) 28%, transparent); }
+.plain { border-radius: 18px; padding: 16px; background: var(--surface); border: 1px solid var(--line); }
+.grad { color: #fff; border-radius: 26px; padding: 20px; background: linear-gradient(135deg, var(--c1), var(--c2)); box-shadow: 0 10px 26px color-mix(in srgb, var(--c1) 35%, transparent); }
+.grad a, .grad .muted { color: #fff; opacity: .92; }
+.badge { width: 44px; height: 44px; flex: none; border-radius: 50%; display: grid; place-items: center; color: #fff;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--tint) 80%, #fff), var(--tint)); }
+.badge svg { width: 22px; height: 22px; }
+.pill { display: inline-block; font-size: .74rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: color-mix(in srgb, var(--tint, var(--accent)) 20%, transparent); color: var(--tint, var(--accent)); }
+.btn { border: 0; border-radius: 12px; padding: 10px 16px; font-weight: 700; background: var(--tint, var(--accent)); color: #fff; display: inline-flex; align-items: center; gap: 8px; justify-content: center; }
+.btn.soft { background: color-mix(in srgb, var(--tint, var(--accent)) 14%, var(--surface)); color: var(--tint, var(--accent)); }
+.btn.big { padding: 14px 24px; font-size: 1.05rem; border-radius: 14px; }
+.btn svg { width: 18px; height: 18px; }
+.btn:disabled { opacity: .45; cursor: default; }
+.round { width: 42px; height: 42px; flex: none; border-radius: 50%; border: 0; display: grid; place-items: center; background: var(--tint); color: #fff; }
+.round svg { width: 18px; height: 18px; }
+.bar { height: 8px; border-radius: 99px; background: color-mix(in srgb, var(--tint, var(--accent)) 18%, var(--surface-2)); overflow: hidden; }
+.bar > i { display: block; height: 100%; border-radius: 99px; background: var(--tint, var(--accent)); }
+.grad .bar { background: rgba(255,255,255,.3); } .grad .bar > i { background: #fff; }
+.seg { display: flex; background: var(--surface-2); border-radius: 12px; padding: 3px; gap: 3px; }
+.seg button { flex: 1; border: 0; background: transparent; border-radius: 9px; padding: 7px 6px; font-weight: 600; font-size: .88rem; }
+.seg button.on { background: var(--surface); box-shadow: 0 1px 4px rgba(0,0,0,.12); color: var(--accent); }
+select { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
+label.toggle { display: flex; align-items: center; gap: 10px; justify-content: space-between; }
+label.toggle input { width: 20px; height: 20px; accent-color: var(--accent); }
+
+/* Hoy */
+.hero { display: flex; flex-direction: column; gap: 12px; }
+.hero .logo { width: 72px; height: 72px; border-radius: 16px; box-shadow: 0 4px 10px rgba(0,0,0,.25); object-fit: cover; background: #fff; }
+.hero .mins { font-family: var(--font-display); font-size: 3.3rem; font-weight: 900; line-height: 1; }
+input[type=range] { width: 100%; accent-color: #fff; }
+.slider-row { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.block { display: flex; gap: 14px; align-items: flex-start; }
+.block .body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+.block a.lesson { font-weight: 600; color: var(--tint); text-decoration: none; }
+.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.tile { border-radius: 18px; padding: 12px 8px; text-align: center; background: color-mix(in srgb, var(--tint) 12%, var(--surface)); display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.tile b { font-family: var(--font-display); font-size: 1.5rem; }
+.tile svg { width: 24px; height: 24px; color: var(--tint); }
+
+/* Curso */
+.styles { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+.stile { text-decoration: none; min-height: 168px; display: flex; flex-direction: column; gap: 6px; border-radius: 22px; padding: 16px; }
+.stile svg.ic { width: 34px; height: 34px; }
+.stile .grow { flex: 1; }
+.chordlink { text-decoration: none; display: flex; align-items: center; gap: 14px; background: linear-gradient(90deg, #5856d6, #ff2d55); border-radius: 20px; padding: 16px; color: #fff; }
+.chordlink svg { width: 30px; height: 30px; flex: none; }
+.milestone { display: flex; gap: 14px; align-items: center; padding-block: 10px; }
+.milestone .n { width: 44px; height: 44px; flex: none; border-radius: 50%; display: grid; place-items: center; color: #fff; font-family: var(--font-display); font-weight: 900; font-size: 1.2rem; background: linear-gradient(135deg, var(--c1), var(--c2)); border: 3px solid var(--surface); box-shadow: 0 2px 8px color-mix(in srgb, var(--c1) 45%, transparent); }
+.road { display: flex; gap: 14px; text-decoration: none; color: inherit; }
+.road .rail { width: 44px; flex: none; display: flex; flex-direction: column; align-items: center; }
+.road .dot { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; flex: none; }
+.road .dot svg { width: 15px; height: 15px; }
+.road .line { width: 4px; flex: 1; border-radius: 2px; }
+.road .lcard { flex: 1; min-width: 0; margin-bottom: 12px; border-radius: 16px; padding: 14px; background: var(--surface); border: 2px solid transparent; display: flex; flex-direction: column; gap: 5px; }
+.road.next .lcard { border-color: var(--c1); background: color-mix(in srgb, var(--c1) 13%, var(--surface)); }
+.road.done .lcard { opacity: .75; }
+.meta { display: flex; gap: 12px; flex-wrap: wrap; font-size: .74rem; color: var(--muted); }
+
+/* Lección */
+.step { display: flex; gap: 12px; align-items: flex-start; border: 0; background: transparent; text-align: left; padding: 8px 4px; width: 100%; border-radius: 10px; }
+.step:hover { background: var(--surface-2); }
+.step .k { width: 28px; height: 28px; flex: none; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 700; font-size: .8rem; background: var(--c1); }
+.step.on .k { background: var(--ok); }
+.step.on span { text-decoration: line-through; color: var(--muted); }
+.section-title { font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; color: var(--muted); }
+.score { display: flex; flex-direction: column; gap: 4px; padding-block: 10px; border-top: 1px solid var(--line); }
+.score:first-of-type { border-top: 0; }
+.score .links { display: flex; gap: 16px; font-weight: 700; font-size: .85rem; }
+.warnnote { font-size: .8rem; color: var(--warn); font-weight: 600; }
+textarea.xml { width: 100%; height: 140px; font-family: ui-monospace, Menlo, monospace; font-size: .72rem; border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); color: var(--fg); padding: 8px; }
+
+/* Acordes */
+.chord { border: 0; text-align: left; width: 100%; border-radius: 14px; padding: 10px; background: color-mix(in srgb, var(--tint) 9%, var(--surface)); display: flex; flex-direction: column; gap: 6px; }
+.chord .hd { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.chord .hd b { font-family: var(--font-display); font-size: 1.2rem; }
+.chord .hd span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chord svg.kb { width: 100%; max-width: 440px; height: auto; display: block; border-radius: 4px; }
+.chordgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 12px; }
+.chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+.chips button { flex: none; border: 0; border-radius: 999px; padding: 6px 13px; font-weight: 700; background: color-mix(in srgb, #5856d6 13%, var(--surface)); color: var(--accent); }
+.chips button.on { background: #5856d6; color: #fff; }
+
+/* Solfeo */
+.menu a { display: flex; align-items: center; gap: 12px; padding: 10px 4px; text-decoration: none; color: inherit; border-top: 1px solid var(--line); }
+.menu a:first-of-type { border-top: 0; }
+.menu .badge { width: 34px; height: 34px; } .menu .badge svg { width: 17px; height: 17px; }
+.keyboard { position: relative; height: 200px; display: flex; user-select: none; touch-action: manipulation; }
+.keyboard .w { flex: 1; border: 1px solid var(--key-line); background: var(--key-white); color: #1d1b2e; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; font-size: .72rem; font-weight: 600; text-align: center; border-radius: 0 0 6px 6px; line-height: 1.1; }
+.keyboard .w:active, .keyboard .w.hit { background: #d7f5df; }
+.keyboard .w.miss { background: #ffd9d6; }
+.keyboard .b { position: absolute; top: 0; height: 60%; background: var(--key-black); border: 0; border-radius: 0 0 5px 5px; z-index: 2; }
+.keyboard .b:active { background: #4a4766; }
+.msg { font-family: var(--font-display); font-weight: 800; font-size: 1.3rem; text-align: center; min-height: 60px; display: grid; place-items: center; }
+svg.staff { width: 100%; height: 220px; display: block; color: var(--fg); }
+.answers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.answers button, .ivs button { border: 1px solid var(--line); background: var(--surface); border-radius: 12px; min-height: 44px; font-weight: 700; }
+.answers button:hover, .ivs button:hover { border-color: var(--accent); }
+.ivs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ivs button { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px; }
+
+/* Progreso */
+.sum { display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; gap: 8px; }
+.sum b { display: block; font-family: var(--font-display); font-size: 1.6rem; }
+.sess { display: flex; gap: 10px; align-items: center; padding-block: 8px; border-top: 1px solid var(--line); }
+.sess:first-child { border-top: 0; }
+.x { border: 0; background: transparent; color: var(--muted); font-size: 1.1rem; padding: 4px 8px; border-radius: 8px; }
+.x:hover { background: var(--surface-2); color: #ff3b30; }
+
+/* Práctica (hoja modal) */
+.sheet { position: fixed; inset: 0; z-index: 40; background: rgba(10, 8, 25, .5); display: flex; align-items: flex-end; justify-content: center; }
+.sheet .pane { width: 100%; max-width: 480px; max-height: 100%; overflow-y: auto; background: var(--bg); border-radius: 24px 24px 0 0; padding: 18px max(16px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); display: flex; flex-direction: column; gap: 18px; align-items: stretch; }
+@media (min-width: 560px) { .sheet { align-items: center; } .sheet .pane { border-radius: 24px; } }
+.ring { width: 220px; height: 220px; margin: 0 auto; position: relative; }
+.ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring .t { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; align-content: center; }
+.ring .t b { font-family: var(--font-display); font-size: 3rem; font-variant-numeric: tabular-nums; }
+.beats { display: flex; gap: 10px; justify-content: center; }
+.beats i { width: 14px; height: 14px; border-radius: 50%; background: var(--line); }
+.beats i.on { background: var(--accent); }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(var(--tabbar-h) + 20px + env(safe-area-inset-bottom, 0px)); z-index: 50; background: var(--fg); color: var(--bg); padding: 10px 18px; border-radius: 999px; font-weight: 600; box-shadow: var(--shadow); max-width: calc(100% - 32px); text-align: center; }
+@media (max-width: 420px) { h1 { font-size: 1.8rem; } .hero .mins { font-size: 2.8rem; } .answers { grid-template-columns: repeat(4, 1fr); } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+
+<main id="app" aria-live="polite"></main>
+<nav class="tabs" aria-label="Secciones"><div class="in" id="tabs"></div></nav>
+<div id="sheet-root"></div>
+
+<script>
+/*__DATA__*/
+const LOGO = "/*__LOGO__*/";
+</script>
+<script>
+"use strict";
+// ───────────────────────────── Modelo (igual que la app de Swift) ─────────────────────────────
+const STYLES = {
+  fundamentos: { name: "Tronco común", c1: "#34c759", c2: "#30b0c7", icon: "walk", summary: "Solfeo y técnica para todos los estilos. Empieza aquí por la Fase 0: el teclado, la postura, el pulso y tus primeras notas." },
+  clasica: { name: "Clásica", c1: "#5856d6", c2: "#af52de", icon: "notes", summary: "Lectura, técnica y piezas de Bach a Debussy, todas de dominio público." },
+  blues: { name: "Blues", c1: "#007aff", c2: "#32ade6", icon: "mic", summary: "La forma de 12 compases, la escala de blues, el shuffle y el boogie-woogie." },
+  jazz: { name: "Jazz", c1: "#ff9500", c2: "#ffcc00", icon: "list", summary: "Swing, acordes de séptima, ragtime y el ii–V–I." },
+  pop: { name: "Pop", c1: "#ff2d55", c2: "#af52de", icon: "star", summary: "Acordes, cifrado americano, acompañamiento y cómo arreglar canciones." },
+  rock: { name: "Rock", c1: "#ff3b30", c2: "#ff9500", icon: "bolt", summary: "Ritmo en corcheas, octavas, rock and roll y clásicos con mucha energía." },
+};
+const STYLE_IDS = Object.keys(STYLES);
+const LEVELS = [
+  { name: "Fase 0", hours: 13 }, { name: "Nivel 1", hours: 70 }, { name: "Nivel 2", hours: 175 }, { name: "Nivel 3", hours: 300 },
+];
+const KINDS = {
+  solfeo: { name: "Solfeo y teoría", icon: "eye", color: "#af52de" },
+  tecnica: { name: "Práctica técnica", icon: "hand", color: "#30b0c7" },
+  partitura: { name: "Repertorio", icon: "doc", color: "#007aff" },
+};
+const BLOCKS = {
+  solfeo: { name: "Solfeo", icon: "eye", color: "#af52de" },
+  tecnica: { name: "Técnica", icon: "hand", color: "#30b0c7" },
+  repertorio: { name: "Repertorio", icon: "doc", color: "#007aff" },
+  libre: { name: "Juego libre", icon: "spark", color: "#ff9500" },
+};
+
+const lessonById = id => LESSONS.find(l => l.id === id);
+const exerciseById = id => EXERCISES.find(e => e.id === id);
+const lessonsOf = (style, level, kind) => LESSONS.filter(l => l.style === style && (level == null || l.level === level) && (kind == null || l.kind === kind));
+
+// ───────────────────────────── Estado guardado en este navegador ─────────────────────────────
+const KEY = "pianocurso.v1";
+const DEFAULT_STATE = { minutes: 40, level: 0, favorite: "clasica", levelStartMinutes: 0, completed: {}, sessions: [], steps: {}, bestReadStreak: 0 };
+let S = load();
+function load() {
+  try { const raw = localStorage.getItem(KEY); if (raw) return Object.assign({}, DEFAULT_STATE, JSON.parse(raw)); } catch (e) {}
+  return JSON.parse(JSON.stringify(DEFAULT_STATE));
+}
+// En claude.ai el progreso se guarda además en tu cuenta (privado: solo tú lo ves), así no se pierde al borrar el navegador.
+let cloudRef = null, cloudTimer = null;
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {}
+  if (cloudRef) { clearTimeout(cloudTimer); cloudTimer = setTimeout(() => cloudRef.set({ state: JSON.stringify(S), updated: new Date().toISOString() }).catch(() => {}), 600); }
+}
+async function connectCloud() {
+  try {
+    if (!window.claude || !window.claude.use) return;
+    const [db, user] = await Promise.all([window.claude.use("db"), window.claude.use("user")]);
+    if (!db || !user) return;
+    const id = await user.id(); if (!id) return;
+    const ref = db.collection("data/users/" + id).doc("progreso");
+    const snap = await ref.get();
+    if (snap.exists && snap.data().state) {
+      const remote = JSON.parse(snap.data().state);
+      // Se queda con la copia que tenga más práctica guardada.
+      if (remote.sessions.length + Object.keys(remote.completed).length >= S.sessions.length + Object.keys(S.completed).length) {
+        S = Object.assign({}, DEFAULT_STATE, remote); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {}
+        if (!document.querySelector(".sheet")) route();
+      }
+    }
+    cloudRef = ref; save();
+  } catch (e) {}
+}
+const totalMinutes = () => S.sessions.reduce((a, s) => a + s.minutes, 0);
+const hoursInLevel = () => Math.max(totalMinutes() - S.levelStartMinutes, 0) / 60;
+const isDone = id => !!S.completed[id];
+
+// ───────────────────────────── Planificador diario ─────────────────────────────
+const MIN_MIN = 15, MAX_MIN = 60, DAYS_PER_WEEK = 5;
+function split(minutes) {
+  const m = Math.min(Math.max(minutes, MIN_MIN), MAX_MIN);
+  const solfeo = m < 20 ? Math.round(m * .25) : Math.floor(m * .25);
+  const libre = m < 20 ? 0 : Math.round(m * .12);
+  return { solfeo, tecnica: solfeo, repertorio: m - 2 * solfeo - libre, libre };
+}
+function isoWeek(d) {
+  const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const day = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - day);
+  const y0 = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+  return Math.ceil(((t - y0) / 864e5 + 1) / 7);
+}
+// Lunes clásica, martes blues, miércoles pop, jueves clásica, viernes jazz o rock (semanas alternas), fin de semana tu favorito.
+function dayStyle(date, level, favorite) {
+  if (level === 0) return "fundamentos";
+  const wd = date.getDay(); // 0 = domingo
+  let s;
+  if (wd === 1 || wd === 4) s = "clasica";
+  else if (wd === 2) s = "blues";
+  else if (wd === 3) s = "pop";
+  else if (wd === 5) s = isoWeek(date) % 2 === 0 ? "jazz" : "rock";
+  else s = favorite === "fundamentos" ? "clasica" : favorite;
+  if (s === "jazz" && level === 1) s = "rock";
+  return s;
+}
+function nextLesson(style, level, kind) {
+  const list = lessonsOf(style, level, kind);
+  return list.find(l => !isDone(l.id)) || list[0] || null;
+}
+function plan(date = new Date()) {
+  const sp = split(S.minutes), lvl = S.level;
+  const style = dayStyle(date, lvl, S.favorite);
+  const rep = nextLesson(style, lvl, "partitura") || nextLesson("fundamentos", lvl, "partitura");
+  const blocks = [
+    { kind: "solfeo", minutes: sp.solfeo, lesson: nextLesson("fundamentos", lvl, "solfeo"), note: "Termina con unos minutos del quiz de lectura." },
+    { kind: "tecnica", minutes: sp.tecnica, lesson: nextLesson("fundamentos", lvl, "tecnica"), note: "Siempre con metrónomo y lento." },
+    { kind: "repertorio", minutes: sp.repertorio, lesson: rep, note: `Estilo del día: ${STYLES[style].name}.` },
+  ];
+  if (sp.libre > 0) blocks.push({ kind: "libre", minutes: sp.libre, lesson: null,
+    note: lvl === 0 ? "Toca lo que quieras con las teclas negras: ¡todo suena bien!" : "Improvisa con lo aprendido o toca algo que ya te salga bien." });
+  return { style, blocks };
+}
+function weeksLeft() {
+  const remaining = Math.max(LEVELS[S.level].hours - hoursInLevel(), 0);
+  return Math.ceil(remaining / (S.minutes * DAYS_PER_WEEK / 60));
+}
+const dayKey = d => { const x = new Date(d); return `${x.getFullYear()}-${x.getMonth() + 1}-${x.getDate()}`; };
+function streak() {
+  const days = new Set([...S.sessions.map(s => dayKey(s.date)), ...Object.values(S.completed).map(dayKey)]);
+  const d = new Date(); d.setHours(12, 0, 0, 0);
+  if (!days.has(dayKey(d))) d.setDate(d.getDate() - 1);
+  let n = 0; while (days.has(dayKey(d))) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+function minutesThisWeek() {
+  const start = new Date(); start.setHours(0, 0, 0, 0); start.setDate(start.getDate() - ((start.getDay() + 6) % 7)); // semana empieza en lunes
+  return S.sessions.filter(s => new Date(s.date) >= start).reduce((a, s) => a + s.minutes, 0);
+}
+
+// ───────────────────────────── Notas, ejercicios y MusicXML ─────────────────────────────
+const STEPS = ["C", "D", "E", "F", "G", "A", "B"], SOLFEGE = ["Do", "Re", "Mi", "Fa", "Sol", "La", "Si"], SEMI = [0, 2, 4, 5, 7, 9, 11];
+function pitch(text) {
+  const m = /^([A-G])([#b]?)(-?\d+)$/.exec(text); if (!m) return null;
+  return { step: m[1], alter: m[2] === "#" ? 1 : m[2] === "b" ? -1 : 0, octave: +m[3] };
+}
+const stepIndex = p => STEPS.indexOf(p.step);
+const diatonic = p => p.octave * 7 + stepIndex(p);
+const midiOf = p => (p.octave + 1) * 12 + SEMI[stepIndex(p)] + p.alter;
+const solfegeName = p => SOLFEGE[stepIndex(p)] + (p.alter === 1 ? "♯" : p.alter === -1 ? "♭" : "");
+const englishName = p => p.step + (p.alter === 1 ? "#" : p.alter === -1 ? "b" : "");
+const fromDiatonic = d => ({ step: STEPS[((d % 7) + 7) % 7], alter: 0, octave: Math.floor(d / 7) });
+function measures(ex) {
+  return ex.notation.split("|").map(bar => bar.trim().split(/\s+/).map(tok => {
+    const [n, dur] = tok.split(":"); if (!dur) return null;
+    return { pitches: n === "R" ? [] : n.split("+").map(pitch).filter(Boolean), duration: +dur };
+  }).filter(Boolean)).filter(b => b.length);
+}
+const clefName = c => c === "treble" ? "Clave de Sol" : "Clave de Fa";
+const xesc = t => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+function noteType(d) { return ({ 1: ["16th", 0], 2: ["eighth", 0], 3: ["eighth", 1], 4: ["quarter", 0], 6: ["quarter", 1], 8: ["half", 0], 12: ["half", 1] })[d] || ["whole", 0]; }
+function musicXML(ex) {
+  const ms = measures(ex);
+  let s = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 4.0 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">
+<score-partwise version="4.0">
+  <work><work-title>${xesc(ex.title)}</work-title></work>
+  <identification>
+    <creator type="composer">Piano Curso (ejercicio original)</creator>
+    <rights>Libre para uso personal y educativo</rights>
+  </identification>
+  <part-list><score-part id="P1"><part-name>Piano</part-name></score-part></part-list>
+  <part id="P1">
+`;
+  ms.forEach((bar, i) => {
+    s += `    <measure number="${i + 1}">\n`;
+    if (i === 0) {
+      const clef = ex.clef === "treble" ? "<sign>G</sign><line>2</line>" : "<sign>F</sign><line>4</line>";
+      s += `      <attributes>
+        <divisions>4</divisions>
+        <key><fifths>${ex.keyFifths}</fifths></key>
+        <time><beats>4</beats><beat-type>4</beat-type></time>
+        <clef>${clef}</clef>
+      </attributes>
+      <direction placement="above">
+        <direction-type><metronome><beat-unit>quarter</beat-unit><per-minute>${ex.tempo}</per-minute></metronome></direction-type>
+        <sound tempo="${ex.tempo}"/>
+      </direction>
+`;
+    }
+    for (const ev of bar) {
+      const [type, dot] = noteType(ev.duration);
+      const tail = `<duration>${ev.duration}</duration><type>${type}</type>${dot ? "<dot/>" : ""}`;
+      if (!ev.pitches.length) s += `      <note><rest/>${tail}</note>\n`;
+      else ev.pitches.forEach((p, k) => {
+        s += `      <note>${k ? "<chord/>" : ""}<pitch><step>${p.step}</step>${p.alter ? `<alter>${p.alter}</alter>` : ""}<octave>${p.octave}</octave></pitch>${tail}</note>\n`;
+      });
+    }
+    if (i === ms.length - 1) s += `      <barline location="right"><bar-style>light-heavy</bar-style></barline>\n`;
+    s += `    </measure>\n`;
+  });
+  return s + "  </part>\n</score-partwise>\n";
+}
+
+// ───────────────────────────── Acordes (tu tabla: 12 tipos × 12 notas) ─────────────────────────────
+const QUALITIES = [
+  ["", "Mayor", "Acorde de 3 notas", [0, 4, 7], "4+3"], ["m", "Menor", "Acorde de 3 notas", [0, 3, 7], "3+4"],
+  ["5dim", "5ª disminuida", "Acorde de 3 notas", [0, 3, 6], "3+3"], ["+", "Aumentado", "Acorde de 3 notas", [0, 4, 8], "4+4"],
+  ["6", "Mayor con 6ª", "Acorde con 6ª", [0, 4, 7, 9], "4+3+2"], ["m6", "Menor con 6ª", "Acorde con 6ª", [0, 3, 7, 9], "3+4+2"],
+  ["7", "7ª dominante", "Acorde de 7ª", [0, 4, 7, 10], "4+3+3"], ["m7", "7ª menor", "Acorde de 7ª", [0, 3, 7, 10], "3+4+3"],
+  ["maj7", "7ª mayor", "Acorde de 7ª", [0, 4, 7, 11], "4+3+4"], ["dim7", "7ª disminuida", "Acorde de 7ª", [0, 3, 6, 9], "3+3+3"],
+  ["9", "9ª dominante", "Acorde de 9ª", [0, 4, 7, 10, 14], "4+3+3+4"], ["7-9", "7ª con 9ª bemol", "Acorde de 9ª", [0, 4, 7, 10, 13], "4+3+3+3"],
+].map(([id, name, family, intervals, formula]) => ({ id, name, family, intervals, formula }));
+const ROOT_SYM = ["C", "D♭", "D", "E♭", "E", "F", "F♯", "G", "A♭", "A", "B♭", "B"];
+const ROOT_ES = ["Do", "Re♭", "Re", "Mi♭", "Mi", "Fa", "Fa♯", "Sol", "La♭", "La", "Si♭", "Si"];
+function chordFrom(root, q) { return { root, q, symbol: ROOT_SYM[root] + q.id, es: `${ROOT_ES[root]} · ${q.name}`, midi: q.intervals.map(i => 60 + root + i) }; }
+function parseChord(t) {
+  const L = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+  if (!(t[0] in L)) return null;
+  let r = L[t[0]], rest = t.slice(1);
+  if (/^[#♯]/.test(rest)) { r++; rest = rest.slice(1); } else if (/^[b♭]/.test(rest)) { r--; rest = rest.slice(1); }
+  const alias = { M7: "maj7", Maj7: "maj7", "Δ": "maj7", dim: "5dim", "°": "5dim", aug: "+", "7b9": "7-9" };
+  const q = QUALITIES.find(q => q.id === (alias[rest] ?? rest));
+  return q ? chordFrom((r + 12) % 12, q) : null;
+}
+const WHITE_PC = new Set([0, 2, 4, 5, 7, 9, 11]);
+const LETTER = { 0: "C", 2: "D", 4: "E", 5: "F", 7: "G", 9: "A", 11: "B" };
+function chordSVG(ch, color, compact) {
+  const top = Math.max(77, Math.max(...ch.midi) + 1);
+  const whites = []; for (let m = 59; m <= top; m++) if (WHITE_PC.has(m % 12)) whites.push(m);
+  const w = 20, h = compact ? 70 : 96, notes = new Set(ch.midi);
+  let s = `<svg class="kb" viewBox="0 0 ${whites.length * w} ${h}" role="img" aria-label="Teclado con ${ch.symbol}">`;
+  whites.forEach((m, i) => {
+    s += `<rect x="${i * w}" y="0" width="${w}" height="${h}" fill="#fff" stroke="#2b2940" stroke-width=".8"/>`;
+    if (notes.has(m)) s += `<circle cx="${i * w + w / 2}" cy="${h - 26}" r="6" fill="${color}"/>`;
+    s += `<text x="${i * w + w / 2}" y="${h - 6}" font-size="9" text-anchor="middle" font-family="Inter, sans-serif" fill="${m % 12 === 0 ? "#e0302a" : "#555"}" font-weight="${m % 12 === 0 ? 700 : 500}">${LETTER[m % 12]}</text>`;
+  });
+  whites.forEach((m, i) => {
+    if (i < whites.length - 1 && !WHITE_PC.has((m + 1) % 12)) {
+      const x = (i + 1) * w - w * .3;
+      s += `<rect x="${x}" y="0" width="${w * .6}" height="${h * .6}" fill="#1d1b2e" rx="1.5"/>`;
+      if (notes.has(m + 1)) s += `<circle cx="${x + w * .3}" cy="${h * .6 - 8}" r="4.2" fill="#fff"/>`;
+    }
+  });
+  return s + "</svg>";
+}
+function chordCard(ch, color, compact) {
+  return `<button class="chord" style="--tint:${color}" data-chord="${ch.midi.join(",")}">
+    <div class="hd"><b>${ch.symbol}</b><span class="small muted">${ch.es}</span><span class="spacer"></span>${icon("speaker", 16, color)}</div>
+    ${chordSVG(ch, color, compact)}
+    ${compact ? "" : `<div class="tiny muted">Notas: ${ch.midi.map(m => ROOT_ES[m % 12]).join(" – ")} · fórmula ${ch.q.formula}</div>`}
+  </button>`;
+}
+
+// ───────────────────────────── Sonido (Web Audio: piano sintetizado) ─────────────────────────────
+let AC = null, master = null;
+function ac() {
+  if (!AC) {
+    AC = new (window.AudioContext || window.webkitAudioContext)();
+    master = AC.createDynamicsCompressor(); master.connect(AC.destination);
+  }
+  if (AC.state === "suspended") AC.resume();
+  return AC;
+}
+const freq = m => 440 * Math.pow(2, (m - 69) / 12);
+function tone(m, when, dur, vel = .8) {
+  const c = ac(), f = freq(m), g = c.createGain(), lp = c.createBiquadFilter();
+  lp.type = "lowpass"; lp.frequency.value = Math.min(9000, f * 8); lp.Q.value = .4;
+  const peak = .22 * vel, decay = Math.max(.6, 2.6 - (m - 48) * .03);
+  g.gain.setValueAtTime(0, when);
+  g.gain.linearRampToValueAtTime(peak, when + .006);
+  g.gain.exponentialRampToValueAtTime(peak * .35, when + .25);
+  g.gain.setTargetAtTime(0.0001, when + .25, decay / 3);
+  g.gain.setTargetAtTime(0, when + dur, .08);
+  [[1, 1, "triangle"], [2, .35, "sine"], [3, .12, "sine"], [4, .06, "sine"]].forEach(([mul, amp, type]) => {
+    const o = c.createOscillator(), og = c.createGain();
+    o.type = type; o.frequency.value = f * mul; o.detune.value = mul === 1 ? 0 : 3; og.gain.value = amp;
+    o.connect(og).connect(lp); o.start(when); o.stop(when + dur + .6);
+  });
+  lp.connect(g).connect(master);
+}
+function playMidi(notes, seconds = .9, vel) { const c = ac(); notes.forEach(n => tone(n, c.currentTime + .01, seconds, vel)); }
+function click(accent, when) {
+  const c = ac(), o = c.createOscillator(), g = c.createGain();
+  o.type = "square"; o.frequency.value = accent ? 1760 : 1175;
+  g.gain.setValueAtTime(accent ? .35 : .2, when); g.gain.exponentialRampToValueAtTime(.0001, when + .05);
+  o.connect(g).connect(master); o.start(when); o.stop(when + .06);
+}
+let exTimer = null, exStopHandler = null;
+function stopExercise() { if (exTimer) { clearTimeout(exTimer); exTimer = null; } if (AC && master) { master.disconnect(); master = AC.createDynamicsCompressor(); master.connect(AC.destination); } if (exStopHandler) { const h = exStopHandler; exStopHandler = null; h(); } }
+function playExercise(ex, tempo, onEnd) {
+  stopExercise();
+  const c = ac(), six = 60 / Math.max(tempo, 20) / 4; let t = c.currentTime + .08;
+  for (const bar of measures(ex)) for (const ev of bar) { ev.pitches.forEach(p => tone(midiOf(p), t, six * ev.duration * .95, .75)); t += six * ev.duration; }
+  exStopHandler = onEnd;
+  exTimer = setTimeout(() => { exTimer = null; const h = exStopHandler; exStopHandler = null; h && h(); }, (t - c.currentTime) * 1000);
+}
+
+// ───────────────────────────── Iconos ─────────────────────────────
+const ICONS = {
+  sun: '<circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/>',
+  keys: '<rect x="2.5" y="4" width="19" height="16" rx="2"/><path d="M7.3 4v16M12 4v16M16.7 4v16"/><path d="M5.5 4h3.6v8H5.5zM10.2 4h3.6v8h-3.6zM14.9 4h3.6v8h-3.6z" fill="currentColor" stroke="none"/>',
+  note: '<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>',
+  chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  walk: '<circle cx="13" cy="4" r="2"/><path d="M9 21l2.5-6.5L14 17v4M7 12l3-4h4l3 4M10.5 8l1 6.5"/>',
+  notes: '<path d="M6 18V6l12-2v12"/><circle cx="4" cy="18" r="2.4"/><circle cx="16" cy="16" r="2.4"/><path d="M6 10l12-2"/>',
+  mic: '<rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0013 0M12 17.5V21M8.5 21h7"/>',
+  list: '<path d="M9 18V6l10-2v12"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="16" r="2"/><path d="M2 6h4M2 10h4M2 14h3"/>',
+  star: '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+  bolt: '<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+  eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  hand: '<path d="M7 11V5.5a1.5 1.5 0 013 0V10M10 10V4a1.5 1.5 0 013 0v6M13 10V5a1.5 1.5 0 013 0v6M16 11V8a1.5 1.5 0 013 0v6a7 7 0 01-7 7h-.5a7 7 0 01-5.6-2.8L3.3 14.4a1.6 1.6 0 012.4-2.1L7 13.6"/>',
+  doc: '<path d="M14 2.5H6.5A1.5 1.5 0 005 4v16a1.5 1.5 0 001.5 1.5h11A1.5 1.5 0 0019 20V7.5z"/><path d="M14 2.5v5h5M9 13h6M9 17h4"/>',
+  spark: '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/>',
+  play: '<path d="M7 4.5v15l12.5-7.5z" fill="currentColor"/>',
+  pause: '<path d="M7 4h3.5v16H7zM13.5 4H17v16h-3.5z" fill="currentColor" stroke="none"/>',
+  stop: '<rect x="6" y="6" width="12" height="12" rx="1.5" fill="currentColor" stroke="none"/>',
+  check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  flame: '<path d="M12 22c4 0 7-2.8 7-7 0-4.5-3.5-7-4.5-11-2 2-3 4-3 6-1-1-2-2-2-4-2.5 2.5-4.5 5.5-4.5 9 0 4.2 3 7 7 7z"/>',
+  up: '<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>',
+  speaker: '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4 4 0 010 6M18 6.5a7.5 7.5 0 010 11"/>',
+  ear: '<path d="M7 9a5 5 0 0110 0c0 3-3 4-3 7a3 3 0 01-5.5 1.6"/><path d="M10 9.5a2 2 0 014 0c0 1.5-1.5 2-1.5 3"/>',
+  timer: '<circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.5 1.5M9.5 2.5h5"/>',
+  share: '<path d="M12 15V3M7.5 7.5L12 3l4.5 4.5M5 12v7.5A1.5 1.5 0 006.5 21h11a1.5 1.5 0 001.5-1.5V12"/>',
+  copy: '<rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V5a2 2 0 00-2-2H6a2 2 0 00-2 2v11a2 2 0 002 2h2"/>',
+  trophy: '<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 01-10 0zM7 6H4v1.5A3.5 3.5 0 007.3 11M17 6h3v1.5a3.5 3.5 0 01-3.3 3.5"/>',
+  chev: '<path d="M9 5l7 7-7 7"/>',
+  graduation: '<path d="M2 9l10-5 10 5-10 5zM6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5M22 9v6"/>',
+};
+function icon(name, size = 20, color) {
+  return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="${color || "currentColor"}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ""}</svg>`;
+}
+const esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const fmt1 = x => x.toFixed(1).replace(".", ",");
+
+// ───────────────────────────── Enlaces a partituras gratuitas ─────────────────────────────
+function scoreURLs(sc) {
+  const q = sc.search || `${sc.title} ${sc.composer}`, u = (b, p) => b + "?" + new URLSearchParams(p).toString();
+  return {
+    imslp: u("https://imslp.org/index.php", { search: q, title: "Special:Search" }),
+    musescore: u("https://musescore.com/sheetmusic", { text: q }),
+    mutopia: u("https://www.mutopiaproject.org/cgibin/make-table.cgi", { searchingfor: q }),
+  };
+}
+
+// ───────────────────────────── Router ─────────────────────────────
+const app = document.getElementById("app");
+let cleanup = [];
+function onLeave(fn) { cleanup.push(fn); }
+function go(name) { location.hash = name; }
+function route() {
+  cleanup.forEach(f => { try { f(); } catch (e) {} }); cleanup = [];
+  stopExercise();
+  const h = (location.hash || "#hoy").slice(1);
+  let tab = "hoy";
+  if (h === "hoy" || h === "") viewToday();
+  else if (h === "curso") { tab = "curso"; viewCourse(); }
+  else if (h === "acordes") { tab = "curso"; viewChordTable(); }
+  else if (h.startsWith("estilo-") && STYLES[h.slice(7)]) { tab = "curso"; viewStyle(h.slice(7)); }
+  else if (h.startsWith("leccion-") && lessonById(h.slice(8))) { tab = "curso"; viewLesson(lessonById(h.slice(8))); }
+  else if (h === "solfeo") { tab = "solfeo"; viewSolfeo(); }
+  else if (h === "teclado") { tab = "solfeo"; viewKeyboard(); }
+  else if (h === "lectura-sol" || h === "lectura-fa") { tab = "solfeo"; viewReading(h === "lectura-sol" ? "treble" : "bass"); }
+  else if (h === "intervalos") { tab = "solfeo"; viewIntervals(); }
+  else if (h === "progreso") { tab = "progreso"; viewProgress(); }
+  else viewToday();
+  renderTabs(tab);
+  window.scrollTo(0, 0);
+}
+function renderTabs(on) {
+  const t = [["hoy", "Hoy", "sun"], ["curso", "Curso", "keys"], ["solfeo", "Solfeo", "note"], ["progreso", "Progreso", "chart"]];
+  document.getElementById("tabs").innerHTML = t.map(([id, n, i]) => `<a href="#${id}" class="${on === id ? "on" : ""}" ${on === id ? 'aria-current="page"' : ""}>${icon(i, 24)}${n}</a>`).join("");
+}
+function topbar(title, back) {
+  return `<div class="topbar"><button class="back" data-back="${back}">‹ Atrás</button><h2>${esc(title)}</h2></div>`;
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-back]"); if (b) { go(b.dataset.back); return; }
+  const c = e.target.closest("[data-chord]"); if (c) { playMidi(c.dataset.chord.split(",").map(Number), 1.4); return; }
+  const p = e.target.closest("[data-practice]"); if (p) { const [kind, lid, mins] = p.dataset.practice.split("|"); openPractice(lid ? lessonById(lid) : null, +mins, kind); }
+});
+window.addEventListener("hashchange", route);
+function toast(t) {
+  const d = document.createElement("div"); d.className = "toast"; d.textContent = t; document.body.appendChild(d);
+  setTimeout(() => d.remove(), 2400);
+}
+
+// ───────────────────────────── Hoy ─────────────────────────────
+function viewToday() {
+  const p = plan(), st = STYLES[p.style], lvl = LEVELS[S.level];
+  app.innerHTML = `
+  <section class="grad hero" style="--c1:${st.c1};--c2:${st.c2}">
+    <div class="row"><div class="stack" style="gap:4px;flex:1;min-width:0"><h1>¡A tocar!</h1><div style="font-weight:600;opacity:.92">Estilo del día: ${st.name}</div></div>
+      ${LOGO ? `<img class="logo" src="${LOGO}" alt="Logo de Piano Curso">` : ""}</div>
+    <div class="row" style="align-items:baseline"><span class="mins num" id="mins">${S.minutes}</span><span style="font-weight:700">minutos hoy</span></div>
+    <div class="slider-row"><span>15</span><input id="slider" type="range" min="15" max="60" step="5" value="${S.minutes}" aria-label="Minutos al día"><span>60</span></div>
+    <div class="small" style="opacity:.92" id="weeks">A este ritmo (5 días por semana) terminas ${lvl.name} en unas ${weeksLeft()} semanas.</div>
+  </section>
+  <div class="row"><h2>Plan de hoy</h2><span class="spacer"></span><span class="muted small">${p.blocks.length} bloques</span></div>
+  <div class="stack" style="gap:12px">${p.blocks.map(b => blockCard(b, b.kind === "repertorio" ? st.c1 : BLOCKS[b.kind].color)).join("")}</div>
+  <h2>Tu racha</h2>
+  <div class="tiles">
+    <div class="tile" style="--tint:#ff9500">${icon("flame", 24)}<b class="num">${streak()}</b><span class="tiny muted">días seguidos</span></div>
+    <div class="tile" style="--tint:#007aff">${icon("clock", 24)}<b class="num">${minutesThisWeek()}</b><span class="tiny muted">min semana</span></div>
+    <div class="tile" style="--tint:#34c759">${icon("up", 24)}<b class="num">${fmt1(hoursInLevel())}</b><span class="tiny muted">h en ${lvl.name}</span></div>
+  </div>
+  <section class="card stack" style="--tint:#8e8ca8">
+    <div class="row" style="font-weight:700">${icon("graduation", 20)} Tu nivel</div>
+    <div class="seg" role="group" aria-label="Nivel actual">${LEVELS.map((l, i) => `<button data-level="${i}" class="${i === S.level ? "on" : ""}">${l.name}</button>`).join("")}</div>
+    <label class="row wrap" for="fav"><span style="flex:1;min-width:160px">Estilo favorito (fines de semana)</span>
+      <select id="fav">${STYLE_IDS.filter(s => s !== "fundamentos").map(s => `<option value="${s}" ${s === S.favorite ? "selected" : ""}>${STYLES[s].name}</option>`).join("")}</select></label>
+    ${S.level === 0 ? `<div class="small muted">Estás en la Fase 0: unas 13 horas para aprender el teclado, la lectura básica y tus primeras piezas. Los estilos empiezan en el Nivel 1.</div>` : ""}
+  </section>`;
+  const slider = document.getElementById("slider");
+  slider.addEventListener("input", () => { S.minutes = +slider.value; document.getElementById("mins").textContent = S.minutes; });
+  slider.addEventListener("change", () => { save(); viewToday(); });
+  app.querySelectorAll("[data-level]").forEach(b => b.onclick = () => { S.level = +b.dataset.level; S.levelStartMinutes = totalMinutes(); save(); viewToday(); });
+  document.getElementById("fav").onchange = e => { S.favorite = e.target.value; save(); viewToday(); };
+}
+function blockCard(b, color) {
+  const meta = BLOCKS[b.kind], done = b.lesson && isDone(b.lesson.id);
+  return `<div class="card block" style="--tint:${color}">
+    <div class="badge">${icon(meta.icon, 22)}</div>
+    <div class="body">
+      <div class="row" style="gap:8px"><h3>${meta.name}</h3><span class="pill num">${b.minutes} min</span>${done ? icon("check", 18, "var(--ok)") : ""}</div>
+      ${b.lesson ? `<a class="lesson" href="#leccion-${b.lesson.id}">${esc(b.lesson.title)} ›</a>` : ""}
+      <div class="tiny muted">${esc(b.note)}</div>
+    </div>
+    <button class="round" aria-label="Practicar ${meta.name}" data-practice="${meta.name}|${b.lesson ? b.lesson.id : ""}|${b.minutes}">${icon("play", 18)}</button>
+  </div>`;
+}
+
+// ───────────────────────────── Curso ─────────────────────────────
+function viewCourse() {
+  app.innerHTML = `<h1>Curso</h1>
+  <a class="chordlink" href="#acordes">${icon("keys", 30)}<div style="flex:1"><h3>Tabla de acordes</h3><div class="tiny" style="opacity:.9">12 tipos × 12 notas, para ver y escuchar</div></div>${icon("chev", 20)}</a>
+  <div class="styles">${STYLE_IDS.map(id => {
+    const s = STYLES[id], all = lessonsOf(id), done = all.filter(l => isDone(l.id)).length;
+    return `<a class="grad stile" href="#estilo-${id}" style="--c1:${s.c1};--c2:${s.c2}">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[s.icon]}</svg>
+      <span class="grow"></span><h3>${s.name}</h3><span class="tiny num" style="opacity:.92">${done} de ${all.length} lecciones</span>
+      <div class="bar"><i style="width:${all.length ? done / all.length * 100 : 0}%"></i></div></a>`;
+  }).join("")}</div>`;
+}
+function viewStyle(id) {
+  const s = STYLES[id], all = lessonsOf(id), next = all.find(l => !isDone(l.id)), doneCount = all.filter(l => isDone(l.id)).length;
+  let html = topbar(s.name, "curso") + `
+  <section class="grad stack" style="--c1:${s.c1};--c2:${s.c2}">
+    <div class="row"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[s.icon]}</svg><span class="spacer"></span><h1 class="num">${doneCount}/${all.length}</h1></div>
+    <div class="small">${s.summary}</div>
+    <div class="bar"><i style="width:${doneCount / Math.max(all.length, 1) * 100}%"></i></div>
+  </section><div>`;
+  LEVELS.forEach((lv, i) => {
+    const ls = lessonsOf(id, i); if (!ls.length) return;
+    const d = ls.filter(l => isDone(l.id)).length;
+    html += `<div class="milestone" style="--c1:${s.c1};--c2:${s.c2};--tint:${s.c1}"><div class="n">${i}</div>
+      <div class="stack" style="gap:4px;flex:1;min-width:0"><div class="row"><h3>${lv.name}</h3><span class="spacer"></span>
+      ${d === ls.length ? `<span class="small" style="color:var(--warn);font-weight:700;display:flex;gap:4px;align-items:center">${icon("trophy", 16)} Completado</span>` : `<b class="num small" style="color:${s.c1}">${d}/${ls.length}</b>`}</div>
+      <div class="tiny muted">Unas ${lv.hours} horas de práctica</div><div class="bar"><i style="width:${d / ls.length * 100}%"></i></div></div></div>`;
+    ls.forEach(l => {
+      const state = isDone(l.id) ? "done" : (next && l.id === next.id ? "next" : "pending"), k = KINDS[l.kind];
+      const dot = state === "done" ? `<div class="dot" style="background:var(--ok);color:#fff">${icon("check", 15)}</div>`
+        : state === "next" ? `<div class="dot" style="background:${s.c1};color:#fff">${icon("play", 13)}</div>`
+        : `<div class="dot" style="background:color-mix(in srgb, ${k.color} 15%, transparent);border:2px solid color-mix(in srgb, ${k.color} 60%, transparent);color:${k.color}">${icon(k.icon, 15)}</div>`;
+      html += `<a class="road ${state}" href="#leccion-${l.id}" style="--c1:${s.c1}">
+        <div class="rail">${dot}<div class="line" style="background:${state === "done" ? "color-mix(in srgb, var(--ok) 50%, transparent)" : `color-mix(in srgb, ${s.c1} 25%, transparent)`}"></div></div>
+        <div class="lcard"><div class="row"><span class="tiny" style="font-weight:700;color:${k.color};display:flex;gap:4px;align-items:center">${icon(k.icon, 14)} ${k.name}</span><span class="spacer"></span>
+          ${state === "next" ? `<span class="pill" style="background:${s.c1};color:#fff">SIGUIENTE</span>` : ""}</div>
+          <h3>${esc(l.title)}</h3><div class="small muted">${esc(l.goal)}</div>
+          <div class="meta"><span>${l.minutes} min</span><span>${l.steps.length} pasos</span>${l.exercise ? "<span>Ejercicio</span>" : ""}${l.scores.length ? `<span>${l.scores.length} partitura${l.scores.length > 1 ? "s" : ""}</span>` : ""}${CHORDS_BY_LESSON[l.id] ? "<span>Acordes</span>" : ""}</div>
+        </div></a>`;
+    });
+  });
+  app.innerHTML = html + "</div>";
+}
+
+function viewLesson(l) {
+  const s = STYLES[l.style], k = KINDS[l.kind], checked = new Set(S.steps[l.id] || []);
+  const chords = (CHORDS_BY_LESSON[l.id] || []).map(parseChord).filter(Boolean), ex = l.exercise && exerciseById(l.exercise);
+  app.innerHTML = topbar(l.title, `estilo-${l.style}`) + `
+  <section class="grad stack" style="--c1:${s.c1};--c2:${s.c2};gap:8px">
+    <div class="tiny" style="font-weight:700;display:flex;gap:6px;align-items:center">${icon(k.icon, 14)} ${s.name} · ${LEVELS[l.level].name} · ${k.name}</div>
+    <h2>${esc(l.goal)}</h2><div class="tiny">Unos ${l.minutes} minutos</div>
+  </section>
+  <section class="plain stack" style="--c1:${s.c1}" id="steps"></section>
+  ${chords.length ? `<section class="stack"><div class="section-title">Acordes de esta lección</div>${chords.map(c => chordCard(c, s.c1, false)).join("")}<div class="tiny muted">Como en tu tabla de acordes. Toca cada uno para oírlo.</div></section>` : ""}
+  ${ex ? `<section class="stack"><div class="section-title">Ejercicio de la app</div><div class="plain" id="exercise"></div></section>` : ""}
+  ${l.scores.length ? `<section class="stack"><div class="section-title">Partituras gratuitas</div><div class="plain">${l.scores.map(scoreRow).join("")}</div>
+    <div class="tiny muted">IMSLP: PDF para leer o imprimir. MuseScore.com: archivos .mscz (filtra por licencia «dominio público»). Mutopia: PDF, MIDI y LilyPond; MuseScore abre el MIDI y el MusicXML.</div></section>` : ""}
+  <section class="row wrap" style="--tint:${s.c1}">
+    <button class="btn" data-practice="${esc(l.title)}|${l.id}|${l.minutes}">${icon("timer", 18)} Practicar con cronómetro y metrónomo</button>
+    <button class="btn soft" id="toggle-done">${isDone(l.id) ? "↩︎ Marcar como pendiente" : `${icon("check", 18)} Marcar como completada`}</button>
+  </section>`;
+  const renderSteps = () => {
+    const n = checked.size, all = l.steps.length;
+    document.getElementById("steps").innerHTML = `
+      <div class="row"><b>Pasos</b><span class="spacer"></span><span class="num small muted">${n} de ${all}</span></div>
+      <div class="bar" style="--tint:${n === all ? "var(--ok)" : s.c1}"><i style="width:${n / all * 100}%"></i></div>
+      <div>${l.steps.map((st, i) => `<button class="step ${checked.has(i) ? "on" : ""}" data-step="${i}" aria-pressed="${checked.has(i)}"><span class="k">${checked.has(i) ? icon("check", 14) : i + 1}</span><span>${esc(st)}</span></button>`).join("")}</div>
+      <div class="small" style="${n === all ? "color:var(--ok);font-weight:600" : ""}">${n === all ? "🎉 ¡Todos los pasos hechos! Márcala como completada abajo." : "Toca cada paso cuando lo hayas hecho."}</div>`;
+    document.querySelectorAll("[data-step]").forEach(b => b.onclick = () => {
+      const i = +b.dataset.step; checked.has(i) ? checked.delete(i) : checked.add(i);
+      S.steps[l.id] = [...checked]; save(); renderSteps();
+    });
+  };
+  renderSteps();
+  if (ex) renderExercise(document.getElementById("exercise"), ex, s.c1);
+  document.getElementById("toggle-done").onclick = () => {
+    if (isDone(l.id)) delete S.completed[l.id]; else S.completed[l.id] = new Date().toISOString();
+    save(); toast(isDone(l.id) ? "Lección completada" : "Lección marcada como pendiente"); viewLesson(l);
+  };
+}
+function scoreRow(sc) {
+  const u = scoreURLs(sc), prot = /protegid|no es libre|derechos/i.test(sc.tip);
+  return `<div class="score"><h3>${esc(sc.title)}</h3><div class="small muted">${esc(sc.composer)} · ${esc(sc.year)}</div>
+    <div class="small ${prot ? "warnnote" : ""}">${esc(sc.tip)}</div>
+    <div class="links"><a href="${u.imslp}" target="_blank" rel="noopener">IMSLP</a><a href="${u.musescore}" target="_blank" rel="noopener">MuseScore</a><a href="${u.mutopia}" target="_blank" rel="noopener">Mutopia</a></div></div>`;
+}
+function renderExercise(el, ex, color) {
+  let tempo = ex.tempo, playing = false;
+  const xml = musicXML(ex), nBars = measures(ex).length;
+  const draw = () => {
+    el.innerHTML = `<div class="stack" style="--tint:${color}">
+      <h3>${esc(ex.title)}</h3><div class="small muted">${esc(ex.detail)}</div><div class="tiny">${clefName(ex.clef)} · ${nBars} compases</div>
+      <div class="row"><span class="num" style="font-weight:600">Tempo: ${tempo} bpm</span><span class="spacer"></span>
+        <button class="btn soft" data-t="-5" aria-label="Más lento">−</button><button class="btn soft" data-t="5" aria-label="Más rápido">+</button></div>
+      <div class="row wrap">
+        <button class="btn" id="ex-play">${playing ? icon("stop", 18) + " Parar" : icon("play", 18) + " Escuchar"}</button>
+        <button class="btn soft" id="ex-dl">${icon("share", 18)} Descargar .musicxml</button>
+        <button class="btn soft" id="ex-copy">${icon("copy", 18)} Copiar MusicXML</button>
+      </div>
+      <div class="tiny muted">Descárgalo y ábrelo en MuseScore (Archivo › Abrir). Si la descarga no arranca, copia el MusicXML, pégalo en un archivo de texto y guárdalo como <b>${ex.id}.musicxml</b>.</div>
+      <textarea class="xml" id="ex-xml" readonly hidden aria-label="MusicXML del ejercicio">${esc(xml)}</textarea>
+    </div>`;
+    el.querySelectorAll("[data-t]").forEach(b => b.onclick = () => { tempo = Math.min(160, Math.max(40, tempo + +b.dataset.t)); if (playing) { playExercise(ex, tempo, onEnd); } draw(); });
+    el.querySelector("#ex-play").onclick = () => { if (playing) { stopExercise(); } else { playing = true; playExercise(ex, tempo, onEnd); draw(); } };
+    el.querySelector("#ex-dl").onclick = async () => {
+      const dl = window.claude && window.claude.use ? await window.claude.use("downloads") : null;
+      if (dl) { try { await dl.save({ filename: `${ex.id}.musicxml`, data: xml }); } catch (e) {} return; }
+      try {
+        const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([xml], { type: "application/vnd.recordare.musicxml+xml" }));
+        a.download = `${ex.id}.musicxml`; document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      } catch (e) {}
+      el.querySelector("#ex-xml").hidden = false;
+    };
+    el.querySelector("#ex-copy").onclick = async () => {
+      const ta = el.querySelector("#ex-xml"); ta.hidden = false;
+      try { await navigator.clipboard.writeText(xml); toast("MusicXML copiado"); } catch (e) { ta.focus(); ta.select(); toast("Selecciona el texto y cópialo"); }
+    };
+  };
+  const onEnd = () => { playing = false; if (el.isConnected) draw(); };
+  draw();
+}
+function viewChordTable() {
+  let q = QUALITIES[0];
+  const draw = () => {
+    app.innerHTML = topbar("Tabla de acordes", "curso") + `
+    <div class="chips" role="group" aria-label="Tipo de acorde">${QUALITIES.map((x, i) => `<button data-q="${i}" class="${x === q ? "on" : ""}">${x.id || "Mayor"}</button>`).join("")}</div>
+    <div><h2>${q.name}</h2><div class="small muted">${q.family} · fórmula ${q.formula} semitonos</div></div>
+    <div class="chordgrid">${Array.from({ length: 12 }, (_, r) => chordCard(chordFrom(r, q), "#5856d6", true)).join("")}</div>
+    <div class="small muted">Toca un acorde para oírlo. La C roja marca cada Do, como en tu tabla.</div>`;
+    app.querySelectorAll("[data-q]").forEach(b => b.onclick = () => { q = QUALITIES[+b.dataset.q]; draw(); });
+  };
+  draw();
+}
+
+// ───────────────────────────── Solfeo ─────────────────────────────
+function viewSolfeo() {
+  const eslava = scoreURLs({ title: "", composer: "", search: "Eslava solfeo" }).imslp;
+  const item = (href, t, ic, c) => `<a href="${href}"><span class="badge" style="--tint:${c}">${icon(ic, 17)}</span><span style="flex:1">${t}</span>${icon("chev", 18, "var(--muted)")}</a>`;
+  app.innerHTML = `<h1>Solfeo</h1>
+  <div class="section-title">Fase 0</div><div class="plain menu">${item("#teclado", "Teclado: encuentra las notas", "keys", "#34c759")}</div>
+  <div class="section-title">Lectura</div><div class="plain menu">${item("#lectura-sol", "Lectura en clave de Sol", "note", "#af52de")}${item("#lectura-fa", "Lectura en clave de Fa", "note", "#5856d6")}</div>
+  <div class="section-title">Oído</div><div class="plain menu">${item("#intervalos", "Oído: intervalos", "ear", "#ff9500")}</div>
+  <div class="section-title">Metrónomo</div><div class="plain menu"><a href="#" id="metro-open"><span class="badge" style="--tint:#007aff">${icon("timer", 17)}</span><span style="flex:1">Cronómetro y metrónomo</span>${icon("chev", 18, "var(--muted)")}</a></div>
+  <div class="section-title">Recursos gratuitos</div>
+  <div class="plain stack"><a href="https://www.musictheory.net/" target="_blank" rel="noopener">musictheory.net: lecciones y ejercicios (en español)</a><a href="${eslava}" target="_blank" rel="noopener">Método de solfeo de Eslava (IMSLP)</a></div>`;
+  document.getElementById("metro-open").onclick = e => { e.preventDefault(); openPractice(null, 10, "Práctica libre"); };
+}
+function viewKeyboard() {
+  const C4 = diatonic({ step: "C", alter: 0, octave: 4 });
+  const whites = Array.from({ length: 10 }, (_, i) => fromDiatonic(C4 + i));
+  let showNames = true, target = null, hits = 0, msg = "Toca las teclas para oírlas.";
+  const label = p => solfegeName(p) + (diatonic(p) === 28 ? "<br>central" : "");
+  const draw = () => {
+    app.innerHTML = topbar("Teclado", "solfeo") + `
+    <div class="msg" id="kmsg">${msg}</div>
+    <div class="keyboard" id="kb">${whites.map((p, i) => `<button class="w" data-w="${i}" aria-label="${solfegeName(p)}">${showNames ? label(p) : ""}</button>`).join("")}
+      ${whites.map((p, i) => ["C", "D", "F", "G", "A"].includes(p.step) && i < whites.length - 1 ? `<button class="b" data-b="${midiOf(p) + 1}" aria-label="Tecla negra" style="left:calc(${(i + 1) * 10}% - 3%);width:6%"></button>` : "").join("")}</div>
+    <label class="toggle plain" for="names">Mostrar nombres <input id="names" type="checkbox" ${showNames ? "checked" : ""}></label>
+    <div class="row" style="justify-content:center"><button class="btn big" id="game" style="--tint:#34c759">${target ? "Otra nota" : "Jugar: encuentra la nota"}</button></div>
+    <div class="muted" style="text-align:center">Aciertos: <b class="num">${hits}</b></div>`;
+    document.getElementById("names").onchange = e => { showNames = e.target.checked; draw(); };
+    document.getElementById("game").onclick = () => { newTarget(); draw(); };
+    app.querySelectorAll("[data-b]").forEach(b => b.onpointerdown = () => playMidi([+b.dataset.b]));
+    app.querySelectorAll("[data-w]").forEach(b => b.onpointerdown = () => tap(+b.dataset.w, b));
+  };
+  const newTarget = () => { target = whites[Math.floor(Math.random() * whites.length)]; msg = `Toca ${solfegeName(target)}${diatonic(target) === 28 ? " central" : ""}`; };
+  let timer = null; onLeave(() => clearTimeout(timer));
+  const tap = (i, btn) => {
+    const p = whites[i]; playMidi([midiOf(p)]);
+    const m = document.getElementById("kmsg");
+    if (!target) { m.textContent = solfegeName(p); return; }
+    if (p.step === target.step) {
+      hits++; btn.classList.add("hit"); m.textContent = `¡Bien! Eso es ${solfegeName(p)}.`;
+      clearTimeout(timer); timer = setTimeout(() => { newTarget(); draw(); }, 1000);
+    } else { btn.classList.add("miss"); setTimeout(() => btn.classList.remove("miss"), 400); m.textContent = `Eso es ${solfegeName(p)}. Busca ${solfegeName(target)}.`; }
+  };
+  draw();
+}
+function staffSVG(p, clef) {
+  const W = 340, H = 200, gap = 16, bottom = H / 2 + gap * 2, left = 8, right = W - 8;
+  let s = `<svg class="staff" viewBox="0 0 ${W} ${H}" role="img" aria-label="Pentagrama en ${clefName(clef)}">`;
+  for (let i = 0; i < 5; i++) s += `<line x1="${left}" x2="${right}" y1="${bottom - i * gap}" y2="${bottom - i * gap}" stroke="currentColor" stroke-width="1.4"/>`;
+  s += clef === "treble"
+    ? `<text x="${left + 8}" y="${bottom + gap * .55}" font-size="${gap * 6.2}" fill="currentColor" font-family='"Noto Music","Bravura","Apple Symbols","Segoe UI Symbol",serif'>𝄞</text>`
+    : `<text x="${left + 10}" y="${bottom - gap * 1.05}" font-size="${gap * 3.6}" fill="currentColor" font-family='"Noto Music","Bravura","Apple Symbols","Segoe UI Symbol",serif'>𝄢</text>`;
+  if (p) {
+    const base = clef === "treble" ? diatonic({ step: "E", octave: 4 }) : diatonic({ step: "G", octave: 2 });
+    const pos = diatonic(p) - base, x = W * .6, y = bottom - pos * gap / 2;
+    const ledgers = [];
+    if (pos <= -2) for (let l = -2; l >= pos; l -= 2) ledgers.push(l);
+    if (pos >= 10) for (let l = 10; l <= pos; l += 2) ledgers.push(l);
+    ledgers.forEach(l => s += `<line x1="${x - gap * 1.3}" x2="${x + gap * 1.3}" y1="${bottom - l * gap / 2}" y2="${bottom - l * gap / 2}" stroke="currentColor" stroke-width="1.4"/>`);
+    s += `<ellipse cx="${x}" cy="${y}" rx="${gap * .78}" ry="${gap * .52}" fill="none" stroke="currentColor" stroke-width="2.6" transform="rotate(-18 ${x} ${y})"/>`;
+  }
+  return s + "</svg>";
+}
+function viewReading(clef) {
+  const RANGES = ["Fase 0", "Nivel 1", "Completo"];
+  let range = 0, current = null, correct = 0, total = 0, feedback = "", english = false, streakN = 0;
+  const pool = () => {
+    const c = clef === "treble" ? diatonic({ step: "C", octave: 4 }) : diatonic({ step: "C", octave: 3 });
+    const [a, b] = range === 0 ? [0, 4] : range === 1 ? (clef === "treble" ? [-1, 12] : [-5, 7]) : (clef === "treble" ? [-3, 16] : [-7, 10]);
+    const out = []; for (let i = a; i <= b; i++) out.push(fromDiatonic(c + i)); return out;
+  };
+  const next = () => { const p = pool(); let c; do { c = p[Math.floor(Math.random() * p.length)]; } while (p.length > 1 && current && diatonic(c) === diatonic(current)); current = c; };
+  const draw = () => {
+    app.innerHTML = topbar(clefName(clef), "solfeo") + `
+    <div class="seg" role="group" aria-label="Rango">${RANGES.map((r, i) => `<button data-r="${i}" class="${i === range ? "on" : ""}">${r}</button>`).join("")}</div>
+    <div class="plain">${staffSVG(current, clef)}</div>
+    <div class="msg" style="min-height:30px;font-size:1.15rem">${feedback}</div>
+    <div class="answers">${STEPS.map((st, i) => `<button data-a="${i}">${english ? st : SOLFEGE[i]}</button>`).join("")}</div>
+    <label class="toggle plain" for="eng">Nombres en inglés (C, D, E…) <input id="eng" type="checkbox" ${english ? "checked" : ""}></label>
+    <div class="small muted num" style="text-align:center">Aciertos ${correct}/${total} · racha ${streakN} · mejor racha ${S.bestReadStreak}</div>`;
+    app.querySelectorAll("[data-r]").forEach(b => b.onclick = () => { range = +b.dataset.r; next(); draw(); });
+    document.getElementById("eng").onchange = e => { english = e.target.checked; draw(); };
+    app.querySelectorAll("[data-a]").forEach(b => b.onclick = () => {
+      total++; playMidi([midiOf(current)]);
+      if (stepIndex(current) === +b.dataset.a) { correct++; streakN++; if (streakN > S.bestReadStreak) { S.bestReadStreak = streakN; save(); } feedback = `<span style="color:var(--ok)">✓ ${solfegeName(current)}</span>`; }
+      else { streakN = 0; feedback = `<span style="color:#ff3b30">✗ Era ${solfegeName(current)} (${englishName(current)})</span>`; }
+      next(); draw();
+    });
+  };
+  next(); draw();
+}
+function viewIntervals() {
+  const EASY = [["3.ª mayor", 4, "Do–Mi"], ["5.ª justa", 7, "Do–Sol"], ["8.ª", 12, "Do–Do"]];
+  const ALL = [["2.ª mayor", 2, "Do–Re"], ["3.ª menor", 3, "Do–Mi♭"], ["3.ª mayor", 4, "Do–Mi"], ["4.ª justa", 5, "Do–Fa"], ["5.ª justa", 7, "Do–Sol"], ["6.ª mayor", 9, "Do–La"], ["8.ª", 12, "Do–Do"]];
+  let hard = false, root = 60, current = EASY[0], feedback = "Pulsa «Escuchar».", correct = 0, total = 0;
+  const opts = () => hard ? ALL : EASY;
+  const listen = () => { const c = ac(); tone(root, c.currentTime + .02, .7); tone(root + current[1], c.currentTime + .82, .9); };
+  const next = play => { const o = opts(); current = o[Math.floor(Math.random() * o.length)]; root = 55 + Math.floor(Math.random() * 13); if (play) listen(); };
+  const draw = () => {
+    app.innerHTML = topbar("Intervalos", "solfeo") + `
+    <label class="toggle plain" for="hard">Todos los intervalos <input id="hard" type="checkbox" ${hard ? "checked" : ""}></label>
+    <div class="row" style="justify-content:center"><button class="btn big" id="listen" style="--tint:#ff9500">${icon("speaker", 20)} Escuchar</button></div>
+    <div class="msg" style="font-size:1.1rem">${feedback}</div>
+    <div class="ivs">${opts().map((iv, i) => `<button data-i="${i}"><span>${iv[0]}</span><span class="tiny muted">${iv[2]}</span></button>`).join("")}</div>
+    <div class="muted num" style="text-align:center">Aciertos ${correct}/${total}</div>`;
+    document.getElementById("hard").onchange = e => { hard = e.target.checked; next(false); draw(); };
+    document.getElementById("listen").onclick = listen;
+    app.querySelectorAll("[data-i]").forEach(b => b.onclick = () => {
+      const iv = opts()[+b.dataset.i]; total++;
+      if (iv[1] === current[1]) { correct++; feedback = `<span style="color:var(--ok)">✓ ¡Correcto! ${current[0]}.</span> Escucha el siguiente.`; }
+      else feedback = `<span style="color:#ff3b30">✗ Era ${current[0]} (${current[2]}).</span> Escucha el siguiente.`;
+      next(true); draw();
+    });
+  };
+  next(false); draw();
+}
+
+// ───────────────────────────── Progreso ─────────────────────────────
+function viewProgress() {
+  const tm = totalMinutes(), hil = hoursInLevel(), lvl = LEVELS[S.level], doneCount = Object.keys(S.completed).filter(lessonById).length;
+  const sessions = [...S.sessions].map((s, i) => ({ ...s, i })).sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 30);
+  const df = new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+  app.innerHTML = `<h1>Progreso</h1>
+  <section class="plain sum">
+    <div><b class="num">${streak()}</b><span class="tiny muted">días seguidos</span></div>
+    <div><b class="num">${fmt1(tm / 60)}</b><span class="tiny muted">horas totales</span></div>
+    <div><b class="num">${doneCount}/${LESSONS.length}</b><span class="tiny muted">lecciones</span></div>
+  </section>
+  <section class="plain stack" style="--tint:#34c759">
+    <b>${lvl.name}: ${fmt1(hil)} de ~${lvl.hours} h</b>
+    <div class="bar"><i style="width:${Math.min(hil / lvl.hours, 1) * 100}%"></i></div>
+    ${hil >= lvl.hours && LEVELS[S.level + 1] ? `<div class="small">Ya llevas las horas del nivel. Si cumples el objetivo de salida, pasa a ${LEVELS[S.level + 1].name} en la pestaña Hoy.</div>` : ""}
+  </section>
+  <div class="section-title">Por ruta</div>
+  <section class="plain stack">${STYLE_IDS.map(id => {
+    const ls = lessonsOf(id), c = ls.filter(l => isDone(l.id)).length;
+    return `<div class="stack" style="gap:4px;--tint:${STYLES[id].c1}"><div class="row"><span style="color:${STYLES[id].c1};display:flex">${icon(STYLES[id].icon, 18)}</span><span>${STYLES[id].name}</span><span class="spacer"></span><span class="num muted">${c}/${ls.length}</span></div><div class="bar"><i style="width:${c / ls.length * 100}%"></i></div></div>`;
+  }).join("")}</section>
+  <div class="section-title">Últimas sesiones</div>
+  <section class="plain">${sessions.length ? sessions.map(s => `<div class="sess"><div style="flex:1;min-width:0"><div>${esc(s.note || "Práctica")}</div><div class="tiny muted">${df.format(new Date(s.date))}</div></div><span class="num">${s.minutes} min</span><button class="x" data-del="${s.i}" aria-label="Borrar sesión">×</button></div>`).join("")
+    : `<div class="muted">Todavía no hay sesiones. Empieza desde la pestaña Hoy.</div>`}</section>
+  <div class="section-title">Copia de seguridad</div>
+  <section class="plain stack">
+    <div class="small muted">Tu progreso se guarda solo en este navegador. Copia el texto para guardarlo o pásalo a otro dispositivo, y pégalo allí con «Restaurar».</div>
+    <div class="row wrap"><button class="btn soft" id="bk-copy">${icon("copy", 18)} Copiar mi progreso</button><button class="btn soft" id="bk-restore">Restaurar…</button></div>
+    <div id="bk-area" hidden class="stack"><textarea class="xml" id="bk-text" aria-label="Datos de progreso"></textarea><div class="row"><button class="btn" id="bk-apply">Restaurar este progreso</button><span class="tiny muted" id="bk-msg"></span></div></div>
+  </section>`;
+  app.querySelectorAll("[data-del]").forEach(b => b.onclick = () => {
+    if (b.dataset.armed) { S.sessions.splice(+b.dataset.del, 1); save(); viewProgress(); }
+    else { b.dataset.armed = 1; b.textContent = "Borrar"; b.style.color = "#ff3b30"; setTimeout(() => { if (b.isConnected) { delete b.dataset.armed; b.textContent = "×"; b.style.color = ""; } }, 3000); }
+  });
+  const area = document.getElementById("bk-area"), ta = document.getElementById("bk-text");
+  document.getElementById("bk-copy").onclick = async () => {
+    const t = JSON.stringify(S); area.hidden = false; ta.value = t;
+    try { await navigator.clipboard.writeText(t); toast("Progreso copiado"); } catch (e) { ta.focus(); ta.select(); toast("Selecciona el texto y cópialo"); }
+  };
+  document.getElementById("bk-restore").onclick = () => { area.hidden = false; ta.value = ""; ta.focus(); };
+  document.getElementById("bk-apply").onclick = () => {
+    try { const d = JSON.parse(ta.value); if (!Array.isArray(d.sessions) || typeof d.completed !== "object") throw 0; S = Object.assign({}, DEFAULT_STATE, d); save(); toast("Progreso restaurado"); viewProgress(); }
+    catch (e) { document.getElementById("bk-msg").textContent = "Ese texto no es una copia de Piano Curso. Pega el texto completo que copiaste."; }
+  };
+}
+
+// ───────────────────────────── Cronómetro + metrónomo ─────────────────────────────
+function openPractice(lesson, target, title) {
+  const root = document.getElementById("sheet-root");
+  let elapsedBefore = 0, startedAt = null, metroOn = false, bpm = 60, beat = 0, tick = null, sched = null, nextT = 0, wake = null;
+  const elapsed = () => Math.floor(elapsedBefore + (startedAt ? (Date.now() - startedAt) / 1000 : 0));
+  root.innerHTML = `<div class="sheet" role="dialog" aria-modal="true" aria-label="Práctica"><div class="pane">
+    <div class="row"><button class="back" id="pr-close">Cerrar</button><span class="spacer"></span><b>Práctica</b><span class="spacer"></span><button class="btn" id="pr-save" disabled>Guardar</button></div>
+    <h3 style="text-align:center">${esc(title)}</h3>
+    <div class="ring"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="var(--surface-2)" stroke-width="7"/><circle id="pr-arc" cx="50" cy="50" r="44" fill="none" stroke="var(--accent)" stroke-width="7" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="276.5"/></svg>
+      <div class="t"><b id="pr-time">00:00</b><span class="tiny muted">objetivo ${target} min</span></div></div>
+    <div class="row" style="justify-content:center"><button class="btn big" id="pr-go">${icon("play", 18)} Empezar</button></div>
+    <section class="plain stack"><b>Metrónomo</b>
+      <label class="toggle" for="pr-metro">Activado <input id="pr-metro" type="checkbox"></label>
+      <div class="row"><span class="num" style="width:80px;font-weight:600" id="pr-bpm">60 bpm</span><input id="pr-bpm-r" type="range" min="40" max="200" step="1" value="60" style="accent-color:var(--accent)" aria-label="Pulsaciones por minuto"></div>
+      <div class="beats" id="pr-beats"><i></i><i></i><i></i><i></i></div>
+    </section></div></div>`;
+  const $ = id => document.getElementById(id);
+  const paint = () => {
+    const e = elapsed(); $("pr-time").textContent = `${String(Math.floor(e / 60)).padStart(2, "0")}:${String(e % 60).padStart(2, "0")}`;
+    $("pr-arc").setAttribute("stroke-dashoffset", 276.5 * (1 - Math.min(e / Math.max(target * 60, 1), 1)));
+    $("pr-save").disabled = e < 30;
+  };
+  const beats = () => $("pr-beats").querySelectorAll("i").forEach((b, i) => b.classList.toggle("on", metroOn && i === beat));
+  const startMetro = () => {
+    clearInterval(sched); if (!metroOn) { beats(); return; }
+    const c = ac(); nextT = c.currentTime + .05; let n = 0;
+    sched = setInterval(() => {
+      while (nextT < c.currentTime + .12) {
+        const b = n % 4, when = nextT; click(b === 0, when);
+        setTimeout(() => { beat = b; beats(); }, Math.max(0, (when - c.currentTime) * 1000));
+        n++; nextT += 60 / bpm;
+      }
+    }, 25);
+  };
+  $("pr-go").onclick = () => {
+    if (startedAt) { elapsedBefore += (Date.now() - startedAt) / 1000; startedAt = null; clearInterval(tick); $("pr-go").innerHTML = `${icon("play", 18)} Seguir`; }
+    else { startedAt = Date.now(); tick = setInterval(paint, 250); $("pr-go").innerHTML = `${icon("pause", 18)} Pausa`;
+      try { navigator.wakeLock && navigator.wakeLock.request("screen").then(w => wake = w).catch(() => {}); } catch (e) {} }
+    paint();
+  };
+  $("pr-metro").onchange = e => { metroOn = e.target.checked; startMetro(); };
+  $("pr-bpm-r").oninput = e => { bpm = +e.target.value; $("pr-bpm").textContent = `${bpm} bpm`; };
+  const close = () => { clearInterval(tick); clearInterval(sched); try { wake && wake.release(); } catch (e) {} root.innerHTML = ""; document.removeEventListener("keydown", onKey); };
+  const onKey = e => { if (e.key === "Escape") close(); };
+  document.addEventListener("keydown", onKey);
+  $("pr-close").onclick = close;
+  root.querySelector(".sheet").onclick = e => { if (e.target.classList.contains("sheet")) close(); };
+  $("pr-save").onclick = () => {
+    const minutes = Math.max(1, Math.round(elapsed() / 60));
+    S.sessions.push({ date: new Date().toISOString(), minutes, lessonID: lesson ? lesson.id : null, note: title }); save();
+    close(); toast(`Guardados ${minutes} min de práctica`); route();
+  };
+  $("pr-go").focus();
+}
+
+route();
+connectCloud();
+</script>
