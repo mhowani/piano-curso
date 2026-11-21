@@ -6,7 +6,7 @@ Todo está en un solo archivo, `index.html`, sin servidor ni dependencias. El pr
 
 ## Juegos de notas
 
-`juegos.html` tiene siete juegos para memorizar las notas (Do2 a Do6) con los colores del pentagrama: nombra la nota, contrarreloj, al teclado, coloca la nota, colores, parejas y mapa con progreso. Se abre desde Solfeo › Juegos. Se genera con `python3 fuente/build_juegos.py` a partir de `fuente/juegos-notas.html`.
+`juegos.html` tiene diez juegos para memorizar las notas (Do2 a Do6) con los colores del pentagrama, que combinan vista, oído y ritmo: nombra la nota, contrarreloj, al teclado, coloca la nota, colores, oído (sube o baja y qué nota suena), ritmo, lee a compás, parejas y mapa con progreso. Se abre desde Solfeo › Juegos. Se genera con `python3 fuente/build_juegos.py` a partir de `fuente/juegos-notas.html`.
 
 ## Publicar con GitHub Pages
 

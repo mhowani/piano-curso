@@ -114,6 +114,18 @@ svg.staff .slotg:hover .ghost { opacity: .35; }
 .sw.right { border-color: var(--ok); box-shadow: 0 0 0 3px var(--ok); }
 .sw.wrong { border-color: var(--bad); box-shadow: 0 0 0 3px var(--bad); animation: shake .3s; }
 
+
+/* Ritmo */
+.tempo { display: flex; align-items: center; gap: 10px; font-weight: 600; flex-wrap: wrap; }
+.tempo input { flex: 1; min-width: 140px; accent-color: var(--accent); }
+.tap { width: 100%; padding: 26px 10px; border-radius: 20px; border: 0; background: var(--accent); color: #fff; font-family: var(--font-display); font-weight: 900; font-size: 1.5rem; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+.tap:active, .tap.hit { filter: brightness(1.2); }
+.beats { display: flex; justify-content: center; gap: 10px; }
+.beats i { width: 16px; height: 16px; border-radius: 50%; background: var(--surface-2); border: 2px solid var(--line); }
+.beats i.on { background: var(--accent); border-color: var(--accent); }
+svg.rhythm { width: 100%; max-width: 520px; height: auto; display: block; margin: 0 auto; color: var(--fg); }
+.legend-r { display: flex; gap: 6px 14px; flex-wrap: wrap; justify-content: center; font-size: .85rem; color: var(--muted); }
+
 /* Parejas */
 .pairs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 @media (max-width: 520px) { .pairs { grid-template-columns: repeat(3, 1fr); } }
@@ -142,7 +154,7 @@ svg.staff .slotg:hover .ghost { opacity: .35; }
   <header>
     <div class="rainbow" aria-hidden="true"><i style="background:var(--n0)"></i><i style="background:var(--n1)"></i><i style="background:var(--n2)"></i><i style="background:var(--n3)"></i><i style="background:var(--n4)"></i><i style="background:var(--n5)"></i><i style="background:var(--n6)"></i></div>
     <h1>Juegos de notas</h1>
-    <p class="muted small" style="margin:0">Aprende a leer las notas en clave de Sol y de Fa, del Do2 al Do6, con los colores de tu pentagrama. Cada juego insiste más en las notas que fallas.</p>
+    <p class="muted small" style="margin:0">Aprende las notas del Do2 al Do6 con los colores de tu pentagrama: léelas, escúchalas, tócalas a tiempo y llévalas al teclado. Los juegos de lectura insisten más en las notas que fallas.</p>
   </header>
 
   <section class="settings" aria-label="Ajustes">
@@ -201,12 +213,12 @@ function posDesc(clef, d) {
 
 // ───────── Sonido ─────────
 let ac = null;
-function play(d, dur = 1.4) {
-  if (S.sound !== "on") return;
+function audio() { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); if (ac.state === "suspended") ac.resume(); return ac; }
+function play(d, dur = 1.4, at = 0, force = false) {
+  if (S.sound !== "on" && !force) return;
   try {
-    ac = ac || new (window.AudioContext || window.webkitAudioContext)();
-    if (ac.state === "suspended") ac.resume();
-    const midi = 12 * (octave(d) + 1) + SEMI[letter(d)], f = 440 * Math.pow(2, (midi - 69) / 12), t = ac.currentTime;
+    audio();
+    const midi = 12 * (octave(d) + 1) + SEMI[letter(d)], f = 440 * Math.pow(2, (midi - 69) / 12), t = at || ac.currentTime;
     const g = ac.createGain();
     g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.3, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
     g.connect(ac.destination);
@@ -215,6 +227,10 @@ function play(d, dur = 1.4) {
       o.connect(og); og.connect(g); o.start(t); o.stop(t + dur + .05);
     });
   } catch (e) {}
+}
+function click(at, accent) {
+  try { audio(); const o = ac.createOscillator(), g = ac.createGain(); o.type = "square"; o.frequency.value = accent ? 1760 : 1175;
+    g.gain.setValueAtTime(accent ? .16 : .09, at); g.gain.exponentialRampToValueAtTime(.0001, at + .05); o.connect(g); g.connect(ac.destination); o.start(at); o.stop(at + .06); } catch (e) {}
 }
 function buzz() {
   if (S.sound !== "on") return;
@@ -298,7 +314,7 @@ document.querySelector(".settings").addEventListener("click", e => {
 
 const GAMES = [
   ["nombra", "Nombra la nota"], ["reloj", "Contrarreloj"], ["teclado", "Al teclado"],
-  ["coloca", "Coloca la nota"], ["colores", "Colores"], ["parejas", "Parejas"], ["mapa", "Mapa y progreso"]
+  ["coloca", "Coloca la nota"], ["colores", "Colores"], ["oido", "Oído"], ["ritmo", "Ritmo"], ["compas", "Lee a compás"], ["parejas", "Parejas"], ["mapa", "Mapa y progreso"]
 ];
 function renderTabs() {
   document.getElementById("games").innerHTML = GAMES.map(([k, t]) => `<button type="button" id="tab-${k}" class="${S.game === k ? "on" : ""}" data-g="${k}">${t}</button>`).join("");
@@ -315,7 +331,7 @@ document.addEventListener("keydown", e => { if (keyHandler && !e.metaKey && !e.c
 
 function startGame() {
   cleanup(); cleanup = () => {}; keyHandler = null;
-  ({ nombra: gameName, reloj: gameClock, teclado: gameKeys, coloca: gamePlace, colores: gameColors, parejas: gamePairs, mapa: gameMap })[S.game]();
+  ({ nombra: gameName, reloj: gameClock, teclado: gameKeys, coloca: gamePlace, colores: gameColors, oido: gameEar, ritmo: gameRhythm, compas: gameBeat, parejas: gamePairs, mapa: gameMap })[S.game]();
 }
 
 function answerButtons(plain) {
@@ -635,6 +651,302 @@ const COLORNAME = ["rojo", "naranja", "amarillo", "verde claro", "azul", "morado
 const COLORHINT = [
   "Do, el punto de partida, en rojo como un semáforo.", "Re, naranja: justo después del rojo.", "Mi, amarillo como el sol de mediodía.",
   "Fa, verde claro, a mitad del arcoíris.", "Sol, azul como el cielo.", "La, morado.", "Si, rosa: el último antes de volver al Do rojo."];
+
+// ───────── Juego: Oído (auditivo + visual) ─────────
+function gameEar() {
+  let mode = store.get("earMode", "updown"), a, b, locked = false, ok = 0, total = 0, streak = 0, alive = true;
+  const refOf = clef => clef === "sol" ? 28 : 21;   // Do4 en clave de Sol, Do3 en clave de Fa
+  stage.innerHTML = `
+    <div class="stage-head"><h2>Oído</h2><div class="stats num"><span>Racha <b id="st-streak">0</b></span><span>Aciertos <b id="st-acc">–</b></span></div></div>
+    <div class="seg" id="ear-mode"><button type="button" id="ear-updown" data-m="updown">¿Sube o baja?</button><button type="button" id="ear-name" data-m="name">¿Qué nota suena?</button></div>
+    <p class="muted small" style="margin:0" id="ear-help"></p>
+    <div class="center"><button class="btn soft" type="button" id="btn-replay">▶ Escuchar otra vez</button></div>
+    <div id="ear-answers"></div>
+    <div class="feedback" id="fb"></div>
+    <div class="staffbox" id="staff"></div>
+    <div class="center" id="next" hidden><button class="btn" type="button" id="btn-next">Siguiente</button></div>`;
+  const fb = stage.querySelector("#fb");
+  function setMode(m) {
+    mode = m; store.set("earMode", m);
+    stage.querySelectorAll("#ear-mode button").forEach(x => x.classList.toggle("on", x.dataset.m === m));
+    stage.querySelector("#ear-help").textContent = m === "updown"
+      ? "Suenan dos notas. ¿La segunda es más aguda (sube) o más grave (baja)? Luego las verás en el pentagrama."
+      : "Primero suena el Do de referencia y después otra nota de esa misma octava. ¿Cuál es? Luego la verás en el pentagrama.";
+    stage.querySelector("#ear-answers").innerHTML = m === "updown"
+      ? `<div class="center"><button class="btn big" type="button" id="ans-up" data-a="up">⬆ Sube</button><button class="btn big" type="button" id="ans-down" data-a="down">⬇ Baja</button></div>`
+      : answerButtons();
+    next();
+  }
+  function listen() {
+    const t = audio().currentTime + .05;
+    if (mode === "updown") { play(a.d, .9, t, true); play(b.d, 1.1, t + .9, true); }
+    else { play(refOf(a.clef), .9, t, true); play(b.d, 1.2, t + 1.1, true); }
+  }
+  function next() {
+    locked = false; stage.querySelector("#next").hidden = true; stage.querySelector("#staff").innerHTML = "";
+    fb.className = "feedback"; fb.innerHTML = `<span class="muted">Escucha…</span>`;
+    stage.querySelectorAll("#ear-answers .ans").forEach(x => x.className = "ans");
+    if (mode === "updown") {
+      const p = pool(); a = p[Math.floor(Math.random() * p.length)];
+      const same = p.filter(n => n.clef === a.clef && n.d !== a.d);
+      b = same[Math.floor(Math.random() * same.length)];
+    } else {
+      const clef = S.clef === "ambas" ? (Math.random() < .5 ? "sol" : "fa") : S.clef, r = refOf(clef);
+      a = { clef, d: r }; let d; do { d = r + 1 + Math.floor(Math.random() * 7); } while (b && d === b.d && Math.random() < .8);
+      b = { clef, d: d === r + 7 && Math.random() < .5 ? r : d };
+    }
+    listen();
+  }
+  function answer(v) {
+    if (locked) return; locked = true; total++;
+    let good, txt;
+    if (mode === "updown") {
+      const up = b.d > a.d; good = (v === "up") === up;
+      txt = `${up ? "Sube" : "Baja"}: de ${nameOf(a.d, true)} a ${nameOf(b.d, true)}`;
+      stage.querySelector(`#ans-${up ? "up" : "down"}`).style.background = "var(--ok)";
+      if (!good) stage.querySelector(`#ans-${v}`).style.background = "var(--bad)";
+    } else {
+      good = v === letter(b.d); txt = `Era ${nameOf(b.d, true)}`;
+      stage.querySelector(`#ans-${letter(b.d)}`).classList.add("right");
+      if (!good) stage.querySelector(`#ans-${v}`).classList.add("wrong");
+    }
+    const notes = mode === "updown" ? [{ d: a.d, x: 150, colored: true, label: plainName(a.d) }, { d: b.d, x: 230, colored: true, label: plainName(b.d) }]
+      : [{ d: a.d, x: 150, colored: true, label: "Do" }, { d: b.d, x: 230, colored: true, anim: true, label: plainName(b.d) }];
+    stage.querySelector("#staff").innerHTML = staffSVG({ clef: a.clef, notes });
+    if (good) { ok++; streak++; fb.className = "feedback ok"; fb.innerHTML = `<span>¡Bien! ${txt}</span>`; }
+    else { streak = 0; fb.className = "feedback bad"; fb.innerHTML = `<span>${txt}</span><span class="hint">Pulsa «Escuchar otra vez» para compararlas.</span>`; }
+    stage.querySelector("#next").hidden = false;
+    stage.querySelector("#st-streak").textContent = streak; stage.querySelector("#st-acc").textContent = Math.round(100 * ok / total) + " %";
+  }
+  stage.querySelector("#ear-mode").addEventListener("click", e => { const x = e.target.closest("button"); if (x) setMode(x.dataset.m); });
+  stage.querySelector("#ear-answers").addEventListener("click", e => {
+    const x = e.target.closest("[data-a], .ans"); if (!x) return;
+    answer(x.dataset.a || +x.dataset.l);
+  });
+  stage.querySelector("#btn-replay").addEventListener("click", listen);
+  stage.querySelector("#btn-next").addEventListener("click", next);
+  keyHandler = e => {
+    if ((e.key === "Enter" || e.key === " ") && locked) { e.preventDefault(); next(); return; }
+    if (mode === "updown") { if (e.key === "ArrowUp") answer("up"); if (e.key === "ArrowDown") answer("down"); }
+    else { const k = KEYMAP[e.key.toLowerCase()]; if (k != null) answer(k); }
+  };
+  cleanup = () => { alive = false; };
+  // El navegador solo deja sonar audio tras tocar algo: la primera ronda espera a un clic.
+  stage.querySelectorAll("#ear-mode button").forEach(x => x.classList.toggle("on", x.dataset.m === mode));
+  stage.querySelector("#ear-help").textContent = "Pulsa «Empezar» para oír la primera ronda.";
+  stage.querySelector("#ear-answers").innerHTML = `<div class="center"><button class="btn big" type="button" id="btn-start">Empezar</button></div>`;
+  stage.querySelector("#btn-start").addEventListener("click", () => setMode(mode));
+}
+
+// ───────── Ritmo: dibujo de un compás de 4/4 ─────────
+// figura: { k: "negra" | "blanca" | "corcheas" | "silencio", beats }
+function rhythmSVG(figs, results) {
+  const W = 400, Hh = 120, y = 74, x0 = 58, bw = (W - x0 - 16) / 4;
+  let s = `<svg class="rhythm" viewBox="0 0 ${W} ${Hh}" role="img" aria-label="Ritmo de un compás">`;
+  s += `<line x1="10" x2="${W - 10}" y1="${y}" y2="${y}" stroke="currentColor" stroke-width="1.4"/>`;
+  s += `<text x="28" y="${y - 6}" font-size="26" font-weight="900" text-anchor="middle" fill="currentColor" style="font-family:var(--font-display)">4</text><text x="28" y="${y + 22}" font-size="26" font-weight="900" text-anchor="middle" fill="currentColor" style="font-family:var(--font-display)">4</text>`;
+  s += `<line x1="${W - 10}" x2="${W - 10}" y1="${y - 20}" y2="${y + 20}" stroke="currentColor" stroke-width="2"/>`;
+  for (let i = 0; i < 4; i++) s += `<text x="${x0 + i * bw + 14}" y="${Hh - 4}" font-size="12" text-anchor="middle" fill="var(--muted)" font-weight="700">${i + 1}</text>`;
+  let beat = 0, on = 0;
+  const col = () => { const r = results && results[on]; return r == null ? "currentColor" : r === "ok" ? "var(--ok)" : r === "near" ? "var(--n1)" : "var(--bad)"; };
+  const head = (x, c, filled) => `<ellipse cx="${x}" cy="${y}" rx="10" ry="7.2" transform="rotate(-20 ${x} ${y})" fill="${filled ? c : "none"}" stroke="${c}" stroke-width="${filled ? 0 : 3}"/><line x1="${x + 9.2}" x2="${x + 9.2}" y1="${y - 3}" y2="${y - 52}" stroke="${c}" stroke-width="2.2"/>`;
+  figs.forEach(f => {
+    const x = x0 + beat * bw + 14;
+    if (f.k === "negra") { s += head(x, col(), true); on++; }
+    else if (f.k === "blanca") { s += head(x, col(), false); on++; }
+    else if (f.k === "silencio") s += `<text x="${x - 9}" y="${y + 16}" font-size="44" fill="currentColor" font-family='"Noto Music","Bravura","Apple Symbols","Segoe UI Symbol",serif'>𝄽</text>`;
+    else if (f.k === "corcheas") {
+      const c1 = col(); on++; const c2 = col(); on++;
+      s += head(x, c1, true) + head(x + bw / 2, c2, true);
+      s += `<rect x="${x + 8.1}" y="${y - 54}" width="${bw / 2 + 2.2}" height="8" fill="currentColor"/>`;
+    }
+    beat += f.beats;
+  });
+  return s + "</svg>";
+}
+function makeBar(level) {
+  const opts = [{ k: "negra", beats: 1, w: 4 }, { k: "blanca", beats: 2, w: 2 }];
+  if (level >= 2) opts.push({ k: "silencio", beats: 1, w: 2 });
+  if (level >= 3) opts.push({ k: "corcheas", beats: 1, w: 3 });
+  let figs, onsets;
+  do {
+    figs = []; let left = 4;
+    while (left > 0) {
+      const o = opts.filter(x => x.beats <= left), tot = o.reduce((a, x) => a + x.w, 0);
+      let r = Math.random() * tot, f = o[0]; for (const x of o) { r -= x.w; if (r <= 0) { f = x; break; } }
+      figs.push(f); left -= f.beats;
+    }
+    onsets = []; let b = 0;
+    figs.forEach(f => { if (f.k === "corcheas") onsets.push(b, b + .5); else if (f.k !== "silencio") onsets.push(b); b += f.beats; });
+  } while (figs[0].k === "silencio" || onsets.length < 2 || (level >= 3 && !figs.some(f => f.k === "corcheas")));
+  return { figs, onsets };
+}
+
+// ───────── Juego: Ritmo (rítmico + auditivo) ─────────
+function gameRhythm() {
+  let level = store.get("rLevel", 1), bpm = store.get("rBpm", 70), bar = makeBar(level), state = "idle", t0 = 0, taps = [], raf = 0, timer = 0, alive = true, good = 0, rounds = 0;
+  stage.innerHTML = `
+    <div class="stage-head"><h2>Ritmo</h2><div class="stats num"><span>Compases perfectos <b id="st-ok">0</b> / <b id="st-total">0</b></span></div></div>
+    <p class="muted small" style="margin:0">Lee el ritmo, escúchalo y luego tócalo pulsando el botón grande (o la barra espaciadora) a tiempo con el metrónomo. Antes suenan 4 clics para contar «1, 2, 3, 4».</p>
+    <div class="seg" id="r-level"><button type="button" data-l="1" id="rl-1">Negras y blancas</button><button type="button" data-l="2" id="rl-2">+ Silencios</button><button type="button" data-l="3" id="rl-3">+ Corcheas</button></div>
+    <div class="tempo"><label for="r-bpm">Tempo</label><input type="range" id="r-bpm" min="50" max="120" step="5" value="${bpm}"><span class="num" id="r-bpm-v">${bpm} ppm</span></div>
+    <div id="r-score"></div>
+    <div class="legend-r"><span>𝅘𝅥 negra = 1 pulso</span><span>𝅗𝅥 blanca = 2 pulsos</span><span>𝄽 silencio = 1 pulso callado</span><span>♫ corcheas = 2 en 1 pulso</span></div>
+    <div class="beats" id="beats"><i></i><i></i><i></i><i></i></div>
+    <div class="feedback" id="fb"><span class="muted">Pulsa «Escuchar» o «Tocar».</span></div>
+    <button class="tap" type="button" id="tap">Toca aquí</button>
+    <div class="center"><button class="btn soft" type="button" id="btn-listen">▶ Escuchar</button><button class="btn" type="button" id="btn-play">● Tocar</button><button class="btn soft" type="button" id="btn-new">Otro ritmo</button></div>`;
+  const fb = stage.querySelector("#fb"), beatEls = [...stage.querySelectorAll("#beats i")];
+  const draw = res => stage.querySelector("#r-score").innerHTML = rhythmSVG(bar.figs, res);
+  const setLevel = () => stage.querySelectorAll("#r-level button").forEach(x => x.classList.toggle("on", +x.dataset.l === level));
+  setLevel(); draw();
+  const beatLen = () => 60 / bpm;
+  function anim() {
+    if (!alive) return;
+    const now = ac.currentTime, bl = beatLen(), k = Math.floor((now - t0) / bl);
+    beatEls.forEach((el, i) => el.classList.toggle("on", ((k % 4) + 4) % 4 === i && now >= t0 - 4 * bl && now < t0 + 4 * bl));
+    if (state !== "idle") raf = requestAnimationFrame(anim); else beatEls.forEach(el => el.classList.remove("on"));
+  }
+  function schedule(withNotes) {
+    audio(); const bl = beatLen(); t0 = ac.currentTime + .15 + 4 * bl;
+    for (let i = -4; i < 4; i++) click(t0 + i * bl, i % 4 === 0 || i === -4);
+    if (withNotes) bar.onsets.forEach((o, i) => { const f = durOf(i); play(31, Math.min(f * bl, 1.2), t0 + o * bl, true); });
+    cancelAnimationFrame(raf); raf = requestAnimationFrame(anim);
+  }
+  function durOf(i) { const o = bar.onsets; return (i + 1 < o.length ? o[i + 1] : 4) - o[i]; }
+  function listen() {
+    if (state !== "idle") return; state = "listen"; schedule(true);
+    fb.className = "feedback"; fb.innerHTML = `<span class="muted">Escucha y sigue las figuras con la vista…</span>`;
+    clearTimeout(timer); timer = setTimeout(() => { state = "idle"; fb.innerHTML = `<span class="muted">Ahora pulsa «Tocar».</span>`; }, (t0 - ac.currentTime + 4 * beatLen()) * 1000 + 100);
+  }
+  function start() {
+    if (state !== "idle") return; state = "play"; taps = []; schedule(false); draw();
+    fb.className = "feedback"; fb.innerHTML = `<span class="muted">1, 2, 3, 4… ¡y toca!</span>`;
+    clearTimeout(timer); timer = setTimeout(evaluate, (t0 - ac.currentTime + 4 * beatLen() + .35) * 1000);
+  }
+  function tap() {
+    const tp = stage.querySelector("#tap"); tp.classList.add("hit"); setTimeout(() => tp.classList.remove("hit"), 90);
+    if (state !== "play") { audio(); return; }
+    play(31, .25, 0, true);
+    taps.push(ac.currentTime);
+  }
+  function evaluate() {
+    if (!alive) return; state = "idle"; rounds++;
+    const bl = beatLen(), win = Math.min(.2, .32 * bl), used = new Set(), res = [], errs = [];
+    taps = taps.filter(t => t > t0 - .5 * bl);
+    bar.onsets.forEach(o => {
+      const exp = t0 + o * bl; let bi = -1, be = 9;
+      taps.forEach((t, i) => { if (!used.has(i) && Math.abs(t - exp) < Math.abs(be)) { be = t - exp; bi = i; } });
+      if (bi >= 0 && Math.abs(be) <= win) { used.add(bi); res.push(Math.abs(be) <= win * .55 ? "ok" : "near"); errs.push(be); }
+      else res.push("miss");
+    });
+    const extra = taps.length - used.size, okN = res.filter(r => r === "ok").length, nearN = res.filter(r => r === "near").length, miss = res.filter(r => r === "miss").length;
+    draw(res);
+    const perfect = miss === 0 && extra === 0 && nearN <= 1;
+    if (perfect) good++;
+    const avg = errs.length ? errs.reduce((a, b) => a + b, 0) / errs.length : 0;
+    const tend = Math.abs(avg) < .03 ? "" : avg < 0 ? " Tiendes a adelantarte un poco." : " Tiendes a ir un poco tarde.";
+    fb.className = "feedback " + (perfect ? "ok" : "bad");
+    fb.innerHTML = `<span>${perfect ? "¡Compás perfecto!" : "Casi."} A tiempo: ${okN}, justo: ${nearN}, fallados: ${miss}${extra > 0 ? `, golpes de más: ${extra}` : ""}.</span><span class="hint">Verde a tiempo, naranja justo, rojo fallado.${tend}${perfect && bpm < 120 ? " Prueba a subir el tempo." : ""}</span>`;
+    stage.querySelector("#st-ok").textContent = good; stage.querySelector("#st-total").textContent = rounds;
+  }
+  stage.querySelector("#tap").addEventListener("pointerdown", e => { e.preventDefault(); tap(); });
+  stage.querySelector("#btn-listen").addEventListener("click", listen);
+  stage.querySelector("#btn-play").addEventListener("click", start);
+  stage.querySelector("#btn-new").addEventListener("click", () => { if (state !== "idle") return; bar = makeBar(level); draw(); fb.className = "feedback"; fb.innerHTML = `<span class="muted">Ritmo nuevo. Escúchalo o tócalo.</span>`; });
+  stage.querySelector("#r-level").addEventListener("click", e => { const x = e.target.closest("button"); if (!x || state !== "idle") return; level = +x.dataset.l; store.set("rLevel", level); setLevel(); bar = makeBar(level); draw(); });
+  const sl = stage.querySelector("#r-bpm");
+  sl.addEventListener("input", () => { if (state !== "idle") { sl.value = bpm; return; } bpm = +sl.value; store.set("rBpm", bpm); stage.querySelector("#r-bpm-v").textContent = bpm + " ppm"; });
+  keyHandler = e => { if (e.key === " " || e.code === "Space") { e.preventDefault(); if (!e.repeat) { if (state === "idle") start(); else tap(); } } };
+  cleanup = () => { alive = false; clearTimeout(timer); cancelAnimationFrame(raf); state = "idle"; };
+}
+
+// ───────── Juego: Lee a compás (visual + rítmico + auditivo) ─────────
+function gameBeat() {
+  const N = 8;
+  let bpm = store.get("bBpm", 50), clef, seq = [], res = [], state = "idle", t0 = 0, raf = 0, timer = 0, alive = true, lastIdx = -2;
+  const best = () => store.get(`beat-${S.clef}-${S.level}`, null);
+  stage.innerHTML = `
+    <div class="stage-head"><h2>Lee a compás</h2><div class="stats num"><span>Mejor <b id="st-best">${best() ?? "–"}</b></span></div></div>
+    <p class="muted small" style="margin:0">Ocho notas, una por pulso. Tras 4 clics de entrada, di cada nota pulsando su botón (o su letra) justo cuando el metrónomo llega a ella. Es leer a primera vista, como al tocar.</p>
+    <div class="tempo"><label for="b-bpm">Tempo</label><input type="range" id="b-bpm" min="30" max="100" step="5" value="${bpm}"><span class="num" id="b-bpm-v">${bpm} ppm</span></div>
+    <div class="scroll" id="b-staff"></div>
+    <div class="beats" id="beats"><i></i><i></i><i></i><i></i></div>
+    <div class="feedback" id="fb"><span class="muted">Pulsa «Empezar» cuando estés listo.</span></div>
+    ${answerButtons()}
+    <div class="center"><button class="btn big" type="button" id="btn-go">Empezar</button></div>`;
+  const fb = stage.querySelector("#fb"), beatEls = [...stage.querySelectorAll("#beats i")];
+  const bl = () => 60 / bpm;
+  function newSeq() {
+    clef = S.clef === "ambas" ? (Math.random() < .5 ? "sol" : "fa") : S.clef;
+    const [a, b] = CLEFS[clef][S.level]; seq = []; let prev = null;
+    for (let i = 0; i < N; i++) {
+      let d; do { d = a + Math.floor(Math.random() * (b - a + 1)); } while (d === prev || (prev != null && Math.abs(d - prev) > 5));
+      seq.push(d); prev = d;
+    }
+    res = Array(N).fill(null);
+  }
+  function draw(cur) {
+    const W = 96 + N * 46, cursor = cur >= 0 && cur < N ? `<rect x="${96 + cur * 46 - 14}" y="8" width="40" height="${H - 16}" rx="10" fill="var(--accent)" opacity=".14"/>` : "";
+    const notes = seq.map((d, i) => ({ d, x: 96 + i * 46 + 6, colored: S.color === "always" || res[i] != null, label: res[i] == null ? "" : res[i] === "ok" ? "✓" : res[i] === "late" ? "~" : "✗" }));
+    let svg = staffSVG({ clef, W, notes, extra: cursor });
+    // etiquetas de resultado con color propio
+    svg = svg.replace(/>✓</g, ' style="fill:var(--ok)">✓<').replace(/>✗</g, ' style="fill:var(--bad)">✗<').replace(/>~</g, ' style="fill:var(--n1)">~<');
+    stage.querySelector("#b-staff").innerHTML = svg.replace('class="staff "', 'class="staff wide"');
+  }
+  newSeq(); draw(-1);
+  function loop() {
+    if (!alive || state !== "run") return;
+    const now = ac.currentTime, k = Math.floor((now - t0) / bl() + .5);
+    const beatK = Math.floor((now - t0) / bl());
+    beatEls.forEach((el, i) => el.classList.toggle("on", ((beatK % 4) + 4) % 4 === i));
+    if (k !== lastIdx) { lastIdx = k; draw(k); }
+    if (now > t0 + (N - .5) * bl() + .1) return finish();
+    raf = requestAnimationFrame(loop);
+  }
+  function go() {
+    if (state === "run") return;
+    if (state === "done") newSeq();
+    audio(); state = "run"; lastIdx = -2; res = Array(N).fill(null);
+    t0 = ac.currentTime + .2 + 4 * bl();
+    for (let i = -4; i < N; i++) click(t0 + i * bl(), ((i % 4) + 4) % 4 === 0);
+    stage.querySelector("#btn-go").disabled = true;
+    fb.className = "feedback"; fb.innerHTML = `<span class="muted">1, 2, 3, 4…</span>`;
+    raf = requestAnimationFrame(loop);
+  }
+  function answer(l) {
+    if (state !== "run") return;
+    const pos = (ac.currentTime - t0) / bl(), i = Math.round(pos);
+    if (i < 0 || i >= N || res[i] != null) return;
+    const good = letter(seq[i]) === l, onTime = Math.abs(pos - i) <= .35;
+    res[i] = !good ? "bad" : onTime ? "ok" : "late";
+    record({ clef, d: seq[i] }, good);
+    if (good) play(seq[i], .5);
+    else buzz();
+    draw(i);
+  }
+  function finish() {
+    state = "done"; cancelAnimationFrame(raf); beatEls.forEach(el => el.classList.remove("on"));
+    res = res.map(r => r ?? "bad"); draw(-1);
+    const okN = res.filter(r => r === "ok").length, late = res.filter(r => r === "late").length;
+    const key = `beat-${S.clef}-${S.level}`, prev = store.get(key, null), score = `${okN}/${N} a ${bpm}`;
+    const better = !prev || bpm > prev.bpm || (bpm === prev.bpm && okN > prev.ok);
+    if (okN >= 6 && better) store.set(key, { bpm, ok: okN });
+    const b = store.get(key, null); stage.querySelector("#st-best").textContent = b ? `${b.ok}/${N} a ${b.bpm}` : "–";
+    fb.className = "feedback " + (okN === N ? "ok" : okN >= 6 ? "" : "bad");
+    fb.innerHTML = `<span>${okN} de ${N} notas a tiempo${late ? `, ${late} correctas pero fuera de tiempo` : ""}.</span><span class="hint">${okN === N ? "¡Perfecto! Sube el tempo 5 ppm." : okN >= 6 ? "Muy bien. Repite hasta hacer 8 de 8." : "Baja el tempo y vuelve a intentarlo: mejor lento y seguido que rápido y a trompicones."}</span>`;
+    const g = stage.querySelector("#btn-go"); g.disabled = false; g.textContent = "Otra lectura";
+  }
+  stage.querySelector(".answers").addEventListener("click", e => { const x = e.target.closest(".ans"); if (x) answer(+x.dataset.l); });
+  stage.querySelector("#btn-go").addEventListener("click", go);
+  const sl = stage.querySelector("#b-bpm");
+  sl.addEventListener("input", () => { if (state === "run") { sl.value = bpm; return; } bpm = +sl.value; store.set("bBpm", bpm); stage.querySelector("#b-bpm-v").textContent = bpm + " ppm"; });
+  keyHandler = e => {
+    if (e.key === "Enter" && state !== "run") { go(); return; }
+    const k = KEYMAP[e.key.toLowerCase()]; if (k != null) answer(k);
+  };
+  cleanup = () => { alive = false; cancelAnimationFrame(raf); state = "idle"; };
+}
 
 // ───────── Juego 5: Parejas ─────────
 function gamePairs() {
