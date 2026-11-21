@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mhowani.github.io/piano-curso/sitemap.xml

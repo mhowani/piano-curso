@@ -9,6 +9,20 @@ head = '''<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#5856d6">
+<meta name="description" content="Juegos gratis para memorizar las notas del piano: lectura en clave de Sol y de Fa, notas por colores, oído y ritmo. Parte de Piano Curso.">
+<meta name="keywords" content="juegos de notas musicales, aprender notas del piano, lectura de notas, clave de sol, clave de fa, solfeo para principiantes, juegos de música gratis">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://mhowani.github.io/piano-curso/juegos.html">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:site_name" content="Piano Curso">
+<meta property="og:title" content="Juegos de notas · Piano Curso">
+<meta property="og:description" content="Juegos gratis para memorizar las notas del piano: lectura en clave de Sol y de Fa, notas por colores, oído y ritmo. Parte de Piano Curso.">
+<meta property="og:url" content="https://mhowani.github.io/piano-curso/juegos.html">
+<meta property="og:image" content="https://mhowani.github.io/piano-curso/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}
 .volver{font-weight:700;text-decoration:none;color:var(--accent)}</style>
 '''
