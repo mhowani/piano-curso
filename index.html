@@ -211,6 +211,8 @@ svg.staff { width: 100%; height: 220px; display: block; color: var(--fg); }
 .sum b { display: block; font-family: var(--font-display); font-size: 1.6rem; }
 .sess { display: flex; gap: 10px; align-items: center; padding-block: 8px; border-top: 1px solid var(--line); }
 .sess:first-child { border-top: 0; }
+.field { width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font: inherit; color: inherit; }
+.field:focus { border-color: var(--accent); }
 .x { border: 0; background: transparent; color: var(--muted); font-size: 1.1rem; padding: 4px 8px; border-radius: 8px; }
 .x:hover { background: var(--surface-2); color: #ff3b30; }
 
@@ -605,6 +607,7 @@ function route() {
   else if (h === "lectura-sol" || h === "lectura-fa") { tab = "solfeo"; viewReading(h === "lectura-sol" ? "treble" : "bass"); }
   else if (h === "intervalos") { tab = "solfeo"; viewIntervals(); }
   else if (h === "progreso") { tab = "progreso"; viewProgress(); }
+  else if (h === "contacto") { tab = ""; viewContact(); }
   else viewToday();
   renderTabs(tab);
   window.scrollTo(0, 0);
@@ -673,13 +676,51 @@ function blockCard(b, color) {
   </div>`;
 }
 
-// Contacto: abre una incidencia (issue) en GitHub; al dueño del repositorio le llega el aviso por correo.
-const CONTACT_URL = "https://github.com/mhowani/piano-curso/issues/new?template=contacto.yml";
+// Contacto: formulario que envía el mensaje por correo a través de Web3Forms (https://web3forms.com).
+// La clave de acceso NO es tu correo: puede estar en el código público sin que nadie vea tu dirección.
+// Mientras esté vacía, el formulario ofrece abrir una incidencia en GitHub.
+const WEB3FORMS_KEY = "";
+const CONTACT_ISSUE_URL = "https://github.com/mhowani/piano-curso/issues/new?template=contacto.yml";
 function contactCard() {
-  return `<a class="plain row" href="${CONTACT_URL}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit" id="contacto">
+  return `<a class="plain row" href="#contacto" style="text-decoration:none;color:inherit" id="tarjeta-contacto">
     <span class="badge" style="--tint:#5856d6;width:38px;height:38px">${icon("mail", 18)}</span>
-    <span style="flex:1;min-width:0"><b>Contacto</b><br><span class="tiny muted">¿Una duda, un error o una idea? Escríbenos (necesitas una cuenta gratuita de GitHub).</span></span>
+    <span style="flex:1;min-width:0"><b>Contacto</b><br><span class="tiny muted">¿Una duda, un error o una idea? Escríbenos y te contestamos por correo.</span></span>
     ${icon("chev", 18, "var(--muted)")}</a>`;
+}
+function viewContact() {
+  const ready = !!WEB3FORMS_KEY;
+  app.innerHTML = topbar("Contacto", "hoy") + `
+  <p class="muted" style="margin:0">¿Una duda, algo que no funciona o una idea para Piano Curso? Escribe aquí. El mensaje llega por correo y la respuesta te llegará a la dirección que pongas.</p>
+  <form class="plain stack" id="contact-form" novalidate>
+    <label class="stack" style="gap:4px" for="c-nombre"><b>Tu nombre</b><input class="field" id="c-nombre" name="name" autocomplete="name" maxlength="80" required></label>
+    <label class="stack" style="gap:4px" for="c-email"><b>Tu correo electrónico</b><input class="field" id="c-email" name="email" type="email" autocomplete="email" maxlength="120" required><span class="tiny muted">Solo para contestarte. No se publica ni se comparte.</span></label>
+    <label class="stack" style="gap:4px" for="c-tipo"><b>¿Sobre qué es?</b><select id="c-tipo" name="tipo"><option>Una duda</option><option>Algo no funciona</option><option>Una idea o sugerencia</option><option>Otra cosa</option></select></label>
+    <label class="stack" style="gap:4px" for="c-mensaje"><b>Tu mensaje</b><textarea class="field" id="c-mensaje" name="message" rows="6" maxlength="4000" required placeholder="Si algo falla, dinos en qué pantalla y con qué dispositivo."></textarea></label>
+    <input type="checkbox" name="botcheck" id="c-bot" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+    <label class="row tiny" for="c-ok" style="align-items:flex-start"><input type="checkbox" id="c-ok" required style="margin-top:2px"><span>Acepto que mi nombre y mi correo se usen solo para responder a este mensaje.</span></label>
+    <div class="row wrap"><button class="btn" type="submit" id="c-send">${icon("mail", 18)} Enviar mensaje</button><span class="small" id="c-status" role="status"></span></div>
+  </form>
+  <div class="tiny muted">¿Prefieres GitHub? También puedes <a href="${CONTACT_ISSUE_URL}" target="_blank" rel="noopener">abrir una incidencia pública</a>.</div>`;
+  const form = document.getElementById("contact-form"), status = document.getElementById("c-status"), send = document.getElementById("c-send");
+  const say = (t, ok) => { status.textContent = t; status.style.color = ok ? "var(--ok)" : "#e5484d"; };
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    const $c = id => document.getElementById(id), name = $c("c-nombre").value.trim(), email = $c("c-email").value.trim(), message = $c("c-mensaje").value.trim(), tipo = $c("c-tipo").value;
+    if (!name || !message) return say("Escribe tu nombre y tu mensaje.");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return say("Revisa el correo: hace falta para poder contestarte.");
+    if (!document.getElementById("c-ok").checked) return say("Marca la casilla para poder enviarlo.");
+    if (!ready) { say("El formulario aún no está activado. Usa el enlace de GitHub de abajo."); return; }
+    send.disabled = true; say("Enviando…", true); status.style.color = "var(--muted)";
+    try {
+      const r = await fetch("https://api.web3forms.com/submit", { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ access_key: WEB3FORMS_KEY, subject: `Piano Curso · ${tipo}`, from_name: "Piano Curso (web)",
+          name, email, tipo, message, botcheck: document.getElementById("c-bot").checked }) });
+      const j = await r.json().catch(() => ({}));
+      if (r.ok && j.success) { form.reset(); say("¡Mensaje enviado! Te contestaremos por correo.", true); }
+      else say("No se ha podido enviar. Inténtalo de nuevo en unos minutos.");
+    } catch (err) { say("No hay conexión. Comprueba internet y vuelve a intentarlo."); }
+    send.disabled = false;
+  });
 }
 
 // ───────────────────────────── Curso ─────────────────────────────
