@@ -107,6 +107,23 @@ input[type=range] { width: 100%; accent-color: #fff; }
 .tile b { font-family: var(--font-display); font-size: 1.5rem; }
 .tile svg { width: 24px; height: 24px; color: var(--tint); }
 
+
+/* Juegos de notas (Solfeo) */
+.gamesbanner { display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: #fff; border-radius: 24px; padding: 18px 18px 20px;
+  background: linear-gradient(120deg, #ec0f4f, #f59a00 30%, #a9d35b 55%, #1424e6 78%, #e23ba3); box-shadow: 0 10px 26px rgba(90, 40, 160, .25); }
+.gamesbanner h2 { color: #fff; font-size: 1.6rem; font-weight: 900; text-shadow: 0 1px 6px rgba(0,0,0,.25); }
+.gamesbanner div:last-child { font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,.3); }
+.gb-dots { display: flex; gap: 5px; }
+.gb-dots i { width: 20px; height: 13px; border-radius: 50%; transform: rotate(-18deg); border: 2px solid rgba(255,255,255,.85); }
+.gametiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+@media (min-width: 620px) { .gametiles { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+.gtile { display: flex; flex-direction: column; gap: 2px; text-decoration: none; color: #fff; border-radius: 18px; padding: 12px 12px 14px; min-width: 0;
+  background: linear-gradient(150deg, color-mix(in srgb, var(--c) 75%, #fff), var(--c)); box-shadow: 0 6px 16px color-mix(in srgb, var(--c) 35%, transparent); transition: transform .1s; }
+.gtile:active { transform: scale(.97); }
+.gtile .gt-ic { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.25); margin-bottom: 6px; }
+.gtile b { font-family: var(--font-display); font-size: 1.05rem; font-weight: 900; line-height: 1.15; }
+.gtile small { font-size: .78rem; opacity: .92; }
+
 /* Curso */
 .styles { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
 .stile { text-decoration: none; min-height: 168px; display: flex; flex-direction: column; gap: 6px; border-radius: 22px; padding: 16px; }
@@ -763,12 +780,30 @@ function viewChordTable() {
 }
 
 // ───────────────────────────── Solfeo ─────────────────────────────
+// Juegos de notas: tarjetas de colores que abren cada juego en juegos.html
+const NOTE_GAMES = [
+  ["nombra", "Nombra la nota", "Lee y di su nombre", "eye", "#ec0f4f"],
+  ["reloj", "Contrarreloj", "60 segundos", "timer", "#f08a00"],
+  ["teclado", "Al teclado", "Encuentra la tecla", "keys", "#2fa84f"],
+  ["coloca", "Coloca la nota", "Ponla en su línea", "hand", "#1f5bf0"],
+  ["colores", "Colores", "Cada nota, su color", "spark", "#e23ba3"],
+  ["oido", "Oído", "¿Sube o baja?", "ear", "#6f55b5"],
+  ["ritmo", "Ritmo", "Toca a tiempo", "bolt", "#ff5a36"],
+  ["compas", "Lee a compás", "Con metrónomo", "notes", "#0a9bb0"],
+  ["parejas", "Parejas", "Juego de memoria", "star", "#af52de"],
+  ["mapa", "Mapa", "Tu progreso", "chart", "#5856d6"]
+];
+function gamesBlock() {
+  const dots = ["#ec0f4f", "#f59a00", "#e9d800", "#a9d35b", "#1424e6", "#6f55b5", "#e23ba3"].map(c => `<i style="background:${c}"></i>`).join("");
+  return `<a class="gamesbanner" href="juegos.html"><div class="gb-dots">${dots}</div><h2>Juegos de notas</h2><div>Lee, escucha y toca a tiempo las notas del Do2 al Do6 con sus colores.</div></a>
+  <div class="gametiles">${NOTE_GAMES.map(([k, t, d, ic, c]) => `<a class="gtile" href="juegos.html#${k}" style="--c:${c}"><span class="gt-ic">${icon(ic, 22)}</span><b>${t}</b><small>${d}</small></a>`).join("")}</div>`;
+}
 function viewSolfeo() {
   const eslava = scoreURLs({ title: "", composer: "", search: "Eslava solfeo" }).imslp;
   const item = (href, t, ic, c) => `<a href="${href}"><span class="badge" style="--tint:${c}">${icon(ic, 17)}</span><span style="flex:1">${t}</span>${icon("chev", 18, "var(--muted)")}</a>`;
   app.innerHTML = `<h1>Solfeo</h1>
   <div class="section-title">Fase 0</div><div class="plain menu">${item("#teclado", "Teclado: encuentra las notas", "keys", "#34c759")}</div>
-  <div class="section-title">Juegos</div><div class="plain menu">${item("juegos.html", "Juegos de notas: lectura, oído, ritmo y colores", "note", "#ec0f4f")}</div>
+  ${gamesBlock()}
   <div class="section-title">Lectura</div><div class="plain menu">${item("#lectura-sol", "Lectura en clave de Sol", "note", "#af52de")}${item("#lectura-fa", "Lectura en clave de Fa", "note", "#5856d6")}</div>
   <div class="section-title">Oído</div><div class="plain menu">${item("#intervalos", "Oído: intervalos", "ear", "#ff9500")}</div>
   <div class="section-title">Metrónomo</div><div class="plain menu"><a href="#" id="metro-open"><span class="badge" style="--tint:#007aff">${icon("timer", 17)}</span><span style="flex:1">Cronómetro y metrónomo</span>${icon("chev", 18, "var(--muted)")}</a></div>

@@ -58,12 +58,14 @@ header { display: flex; flex-direction: column; gap: 6px; }
 
 /* Pestañas de juegos */
 .games { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
-.games button { flex: none; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 8px 14px; font-weight: 700; font-size: .88rem; }
-.games button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.games button { flex: none; display: inline-flex; align-items: center; gap: 7px; border: 2px solid color-mix(in srgb, var(--g) 45%, transparent); background: color-mix(in srgb, var(--g) 10%, var(--surface)); color: var(--fg); border-radius: 999px; padding: 7px 14px; font-weight: 700; font-size: .88rem; }
+.games button i { width: 10px; height: 10px; border-radius: 50%; background: var(--g); }
+.games button.on { background: var(--g); border-color: var(--g); color: #fff; }
+.games button.on i { background: #fff; }
 
-.stage { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 18px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.stage { --g: var(--accent); background: var(--surface); border: 1px solid var(--line); border-top: 6px solid var(--g); border-radius: 22px; padding: 18px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
 .stage-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-.stage-head h2 { flex: 1 0 auto; }
+.stage-head h2 { flex: 1 0 auto; color: var(--g); }
 .stage-head .stats { flex-wrap: wrap; }
 .stats { display: flex; gap: 14px; font-weight: 700; font-size: .9rem; }
 .stats span { display: inline-flex; gap: 4px; align-items: baseline; }
@@ -323,17 +325,29 @@ document.querySelector(".settings").addEventListener("click", e => {
   S[b.dataset.k] = b.dataset.v; save(); renderSettings(); startGame();
 });
 
+// Cada juego con su color (los mismos que en Solfeo › Juegos de la app)
 const GAMES = [
-  ["nombra", "Nombra la nota"], ["reloj", "Contrarreloj"], ["teclado", "Al teclado"],
-  ["coloca", "Coloca la nota"], ["colores", "Colores"], ["oido", "Oído"], ["ritmo", "Ritmo"], ["compas", "Lee a compás"], ["parejas", "Parejas"], ["mapa", "Mapa y progreso"]
+  ["nombra", "Nombra la nota", "#ec0f4f"], ["reloj", "Contrarreloj", "#f08a00"], ["teclado", "Al teclado", "#2fa84f"],
+  ["coloca", "Coloca la nota", "#1f5bf0"], ["colores", "Colores", "#e23ba3"], ["oido", "Oído", "#6f55b5"], ["ritmo", "Ritmo", "#ff5a36"],
+  ["compas", "Lee a compás", "#0a9bb0"], ["parejas", "Parejas", "#af52de"], ["mapa", "Mapa y progreso", "#5856d6"]
 ];
+const gameColor = k => (GAMES.find(g => g[0] === k) || GAMES[0])[2];
 function renderTabs() {
-  document.getElementById("games").innerHTML = GAMES.map(([k, t]) => `<button type="button" id="tab-${k}" class="${S.game === k ? "on" : ""}" data-g="${k}">${t}</button>`).join("");
+  document.getElementById("games").innerHTML = GAMES.map(([k, t, c]) => `<button type="button" id="tab-${k}" class="${S.game === k ? "on" : ""}" data-g="${k}" style="--g:${c}"><i></i>${t}</button>`).join("");
+  document.getElementById("stage").style.setProperty("--g", gameColor(S.game));
+  const on = document.getElementById("tab-" + S.game); if (on && on.scrollIntoView) on.scrollIntoView({ block: "nearest", inline: "nearest" });
+}
+function selectGame(k) {
+  if (!GAMES.some(g => g[0] === k)) return;
+  S.game = k; save(); renderTabs(); startGame();
+  try { if (location.hash !== "#" + k) history.replaceState(null, "", "#" + k); } catch (e) {}
 }
 document.getElementById("games").addEventListener("click", e => {
   const b = e.target.closest("button[data-g]"); if (!b) return;
-  S.game = b.dataset.g; save(); renderTabs(); startGame();
+  selectGame(b.dataset.g);
 });
+window.addEventListener("hashchange", () => selectGame(location.hash.slice(1)));
+{ const h = location.hash.slice(1); if (GAMES.some(g => g[0] === h)) S.game = h; }
 
 const stage = document.getElementById("stage");
 let cleanup = () => {};
