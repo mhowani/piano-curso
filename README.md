@@ -4,6 +4,10 @@ Versión web de la app Piano Curso: plan diario de 15 a 60 minutos, curso por es
 
 Todo está en un solo archivo, `index.html`, sin servidor ni dependencias. El progreso se guarda en el navegador de cada dispositivo (en Progreso › Copia de seguridad puedes pasarlo de uno a otro).
 
+## Juegos de notas
+
+`juegos.html` tiene diez juegos para memorizar las notas (Do2 a Do6) con los colores del pentagrama, que combinan vista, oído y ritmo: nombra la nota, contrarreloj, al teclado, coloca la nota, colores, oído (sube o baja y qué nota suena), ritmo, lee a compás, parejas y mapa con progreso. Se abre desde Solfeo › Juegos. Se genera con `python3 fuente/build_juegos.py` a partir de `fuente/juegos-notas.html`.
+
 ## Publicar con GitHub Pages
 
 Settings › Pages › Source: *Deploy from a branch*, rama `main`, carpeta `/ (root)`. La web queda en `https://<usuario>.github.io/piano-curso/`.

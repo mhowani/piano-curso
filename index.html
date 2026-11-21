@@ -768,6 +768,7 @@ function viewSolfeo() {
   const item = (href, t, ic, c) => `<a href="${href}"><span class="badge" style="--tint:${c}">${icon(ic, 17)}</span><span style="flex:1">${t}</span>${icon("chev", 18, "var(--muted)")}</a>`;
   app.innerHTML = `<h1>Solfeo</h1>
   <div class="section-title">Fase 0</div><div class="plain menu">${item("#teclado", "Teclado: encuentra las notas", "keys", "#34c759")}</div>
+  <div class="section-title">Juegos</div><div class="plain menu">${item("juegos.html", "Juegos de notas: lectura, oído, ritmo y colores", "note", "#ec0f4f")}</div>
   <div class="section-title">Lectura</div><div class="plain menu">${item("#lectura-sol", "Lectura en clave de Sol", "note", "#af52de")}${item("#lectura-fa", "Lectura en clave de Fa", "note", "#5856d6")}</div>
   <div class="section-title">Oído</div><div class="plain menu">${item("#intervalos", "Oído: intervalos", "ear", "#ff9500")}</div>
   <div class="section-title">Metrónomo</div><div class="plain menu"><a href="#" id="metro-open"><span class="badge" style="--tint:#007aff">${icon("timer", 17)}</span><span style="flex:1">Cronómetro y metrónomo</span>${icon("chev", 18, "var(--muted)")}</a></div>
