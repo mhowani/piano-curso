@@ -523,6 +523,7 @@ const ICONS = {
   trophy: '<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 01-10 0zM7 6H4v1.5A3.5 3.5 0 007.3 11M17 6h3v1.5a3.5 3.5 0 01-3.3 3.5"/>',
   chev: '<path d="M9 5l7 7-7 7"/>',
   graduation: '<path d="M2 9l10-5 10 5-10 5zM6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5M22 9v6"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5L12 13l8.5-6.5"/>',
 };
 function icon(name, size = 20, color) {
   return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="${color || "currentColor"}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ""}</svg>`;
@@ -607,7 +608,8 @@ function viewToday() {
     <label class="row wrap" for="fav"><span style="flex:1;min-width:160px">Estilo favorito (fines de semana)</span>
       <select id="fav">${STYLE_IDS.filter(s => s !== "fundamentos").map(s => `<option value="${s}" ${s === S.favorite ? "selected" : ""}>${STYLES[s].name}</option>`).join("")}</select></label>
     ${S.level === 0 ? `<div class="small muted">Estás en la Fase 0: unas 13 horas para aprender el teclado, la lectura básica y tus primeras piezas. Los estilos empiezan en el Nivel 1.</div>` : ""}
-  </section>`;
+  </section>
+  ${contactCard()}`;
   const slider = document.getElementById("slider");
   slider.addEventListener("input", () => { S.minutes = +slider.value; document.getElementById("mins").textContent = S.minutes; });
   slider.addEventListener("change", () => { save(); viewToday(); });
@@ -625,6 +627,15 @@ function blockCard(b, color) {
     </div>
     <button class="round" aria-label="Practicar ${meta.name}" data-practice="${meta.name}|${b.lesson ? b.lesson.id : ""}|${b.minutes}">${icon("play", 18)}</button>
   </div>`;
+}
+
+// Contacto: abre una incidencia (issue) en GitHub; al dueño del repositorio le llega el aviso por correo.
+const CONTACT_URL = "https://github.com/mhowani/piano-curso/issues/new?template=contacto.yml";
+function contactCard() {
+  return `<a class="plain row" href="${CONTACT_URL}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit" id="contacto">
+    <span class="badge" style="--tint:#5856d6;width:38px;height:38px">${icon("mail", 18)}</span>
+    <span style="flex:1;min-width:0"><b>Contacto</b><br><span class="tiny muted">¿Una duda, un error o una idea? Escríbenos (necesitas una cuenta gratuita de GitHub).</span></span>
+    ${icon("chev", 18, "var(--muted)")}</a>`;
 }
 
 // ───────────────────────────── Curso ─────────────────────────────
@@ -903,6 +914,7 @@ function viewProgress() {
   <div class="section-title">Últimas sesiones</div>
   <section class="plain">${sessions.length ? sessions.map(s => `<div class="sess"><div style="flex:1;min-width:0"><div>${esc(s.note || "Práctica")}</div><div class="tiny muted">${df.format(new Date(s.date))}</div></div><span class="num">${s.minutes} min</span><button class="x" data-del="${s.i}" aria-label="Borrar sesión">×</button></div>`).join("")
     : `<div class="muted">Todavía no hay sesiones. Empieza desde la pestaña Hoy.</div>`}</section>
+  ${contactCard()}
   <div class="section-title">Copia de seguridad</div>
   <section class="plain stack">
     <div class="small muted">Tu progreso se guarda solo en este navegador. Copia el texto para guardarlo o pásalo a otro dispositivo, y pégalo allí con «Restaurar».</div>

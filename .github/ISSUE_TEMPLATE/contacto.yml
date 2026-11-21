@@ -1,0 +1,26 @@
+name: Contacto
+description: Escribe una duda, un error que hayas visto o una idea para Piano Curso.
+title: "[Contacto] "
+labels: ["contacto"]
+body:
+  - type: dropdown
+    id: tipo
+    attributes:
+      label: ¿Sobre qué es tu mensaje?
+      options:
+        - Una duda
+        - Algo no funciona
+        - Una idea o sugerencia
+        - Otra cosa
+    validations:
+      required: true
+  - type: textarea
+    id: mensaje
+    attributes:
+      label: Tu mensaje
+      description: Cuéntalo con tus palabras. Si algo falla, di en qué pantalla y con qué dispositivo (por ejemplo, iPhone con Safari).
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: "Este mensaje es público: cualquiera puede leerlo. No pongas tu teléfono, tu dirección ni otros datos personales."
