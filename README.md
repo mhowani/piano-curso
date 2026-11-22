@@ -21,3 +21,7 @@ Settings › Pages › Source: *Deploy from a branch*, rama `main`, carpeta `/ (
 `fuente/conv.py` lee `Curriculum.swift`, `ExerciseLibrary.swift` y `Chords.swift` y crea `data.js`; `fuente/build.py` lo junta con `fuente/app.html` y el logo para crear `index.html`. Ajusta las rutas al principio de cada script.
 
 Las partituras enlazadas son búsquedas en IMSLP, MuseScore.com y Mutopia; lo recomendado es de dominio público en España salvo lo marcado con ⚠︎.
+
+## Manual y privacidad
+
+`manual.html` y `privacidad.html` se generan con `python3 fuente/paginas.py`. El mismo script crea `InfoContent.swift` para la app de Xcode si le pasas una carpeta (`python3 fuente/paginas.py ruta/a/Models`), así la web y la app muestran el mismo texto.
