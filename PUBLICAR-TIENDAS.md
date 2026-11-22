@@ -43,7 +43,7 @@ Los dos paquetes se generan gratis en **[PWABuilder](https://www.pwabuilder.com)
    - Descripción breve (máx. 80): `Aprende piano desde cero, gratis: solfeo, técnica y repertorio por estilos.`
    - Descripción completa: puedes copiar la del manual o la de la web.
    - Icono: `iconos/icon-512.png` · Gráfico destacado: `tienda/grafico-play-1024x500.png` · Capturas de teléfono: `tienda/movil-1.png`, `movil-2.png`, `movil-3.png`.
-   - Categoría: **Educación**. Correo de contacto: el tuyo.
+   - Categoría: **Educación**. Correo de contacto: **cursopiano@outlook.es**.
 3. **Contenido de la aplicación** (cuestionarios obligatorios):
    - Política de privacidad: `https://mhowani.github.io/piano-curso/privacidad.html`.
    - Anuncios: **No**. Acceso: **todo disponible sin restricciones**.
@@ -80,7 +80,7 @@ Si prefieres, dímelo cuando tengas las huellas y lo preparo yo.
 ### 2.3 Enviar a la tienda
 En Partner Center, en tu app, **Iniciar envío**:
 - Precios: **Gratis**, todos los mercados.
-- Propiedades: categoría **Educación**, política de privacidad `https://mhowani.github.io/piano-curso/privacidad.html`.
+- Propiedades: categoría **Educación**, política de privacidad `https://mhowani.github.io/piano-curso/privacidad.html`, correo de soporte **cursopiano@outlook.es**.
 - Clasificación por edades: el cuestionario de IARC, igual que en Google (todo **No**).
 - Paquetes: los dos archivos del ZIP.
 - Ficha (español): descripción, capturas `tienda/escritorio-1.png` y `escritorio-2.png`, logo `iconos/icon-512.png`.
@@ -132,5 +132,5 @@ Cuando las apps estén publicadas, pon sus direcciones en `PREMIUM.links` de `fu
 ### 5.5 Lo que te toca en España
 - **Alta de autónomo** (Seguridad Social, sistema RETA, y Hacienda con el modelo 036/037) antes de empezar a cobrar de forma habitual. El primer año hay tarifa plana de unos 80 € al mes.
 - **Declarar** los ingresos en el IRPF (pago fraccionado trimestral, modelo 130). Las tiendas actúan como intermediario y te mandan facturas mensuales de su comisión. Un gestor suele costar entre 40 y 60 € al mes y te lo lleva todo.
-- **Política de privacidad y aviso legal** con tu nombre completo, NIF y un correo de contacto (lo exige la LSSI en cuanto la web o la app tienen actividad económica). Pásame esos datos y los añado a `privacidad.html` y a la app.
+- **Política de privacidad y aviso legal** con tu nombre completo, NIF y un correo de contacto (lo exige la LSSI en cuanto la web o la app tienen actividad económica). El correo ya está puesto (**cursopiano@outlook.es**); faltan tu nombre completo y tu NIF.
 - La política de privacidad tiene que decir que las compras las gestiona cada tienda y que el servidor de Google Play recibe solo el código de la compra, sin datos personales.

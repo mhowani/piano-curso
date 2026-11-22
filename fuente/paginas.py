@@ -6,19 +6,22 @@ import os, re, sys, html
 
 WEB = "https://mhowani.github.io/piano-curso/"
 UPDATED = "22 de noviembre de 2026"
+EMAIL = "cursopiano@outlook.es"
+MAIL = f"[{EMAIL}](mailto:{EMAIL})"
 
 PRIVACY = {
     "title": "Política de privacidad",
-    "intro": f"Última actualización: {UPDATED}. Piano Curso es un proyecto personal, gratuito y sin publicidad para aprender piano. Esta política explica qué datos se tratan en la web y en la app, para qué y qué derechos tienes, según el Reglamento General de Protección de Datos (RGPD) y la Ley Orgánica 3/2018 (LOPDGDD).",
+    "intro": f"Última actualización: {UPDATED}. Piano Curso es un proyecto personal y sin publicidad para aprender piano, gratuito en su parte básica y con una compra opcional (Premium). Esta política explica qué datos se tratan en la web y en la app, para qué y qué derechos tienes, según el Reglamento General de Protección de Datos (RGPD) y la Ley Orgánica 3/2018 (LOPDGDD).",
     "sections": [
         ("responsable", "Quién es el responsable", [
-            ("p", "El responsable del tratamiento es **Rubén**, titular de Piano Curso, con residencia en España. Para cualquier asunto de privacidad puedes escribirle desde el [formulario de contacto](" + WEB + "#contacto)."),
+            ("p", "El responsable del tratamiento es **Rubén**, titular de Piano Curso, con residencia en España. Para cualquier asunto de privacidad puedes escribirle a " + MAIL + " o desde el [formulario de contacto](" + WEB + "#contacto)."),
         ]),
         ("resumen", "En resumen", [
             ("ul", [
                 "No hay cuentas, ni publicidad, ni cookies de seguimiento, ni herramientas de analítica.",
                 "Tu progreso (minutos, lecciones y ajustes) se guarda **solo en tu dispositivo** y nunca se envía a ningún servidor.",
-                "Solo se tratan datos personales si escribes por el formulario de contacto: tu nombre, tu correo y tu mensaje, para contestarte.",
+                "Solo se tratan datos personales si nos escribes (formulario de contacto o correo): tu nombre, tu correo y tu mensaje, para contestarte.",
+                "Si compras Premium, el pago lo hace la tienda de tu dispositivo (App Store, Google Play o Microsoft Store). Piano Curso no ve tu nombre, tu correo ni tu tarjeta.",
             ]),
         ]),
         ("progreso", "Tu progreso en el dispositivo", [
@@ -36,6 +39,18 @@ PRIVACY = {
             ]),
             ("p", "Si prefieres no usar el formulario, también puedes abrir una incidencia en [GitHub](https://github.com/mhowani/piano-curso/issues). Ten en cuenta que esas incidencias son **públicas**."),
         ]),
+        ("correo", "Correo electrónico", [
+            ("p", "Si escribes a " + MAIL + ", tu dirección y tu mensaje se usan solo para contestarte, con la misma finalidad, base legal (tu consentimiento al escribir) y plazo que el formulario de contacto. El buzón está alojado en Outlook.com, de Microsoft, que actúa como encargado del tratamiento. Más información en la [declaración de privacidad de Microsoft](https://privacy.microsoft.com/es-es/privacystatement)."),
+        ]),
+        ("compras", "Compras (Premium)", [
+            ("ul", [
+                "Premium es un pago único que se hace dentro de la app con la tienda de tu dispositivo: **App Store** (Apple), **Google Play** (Google) o **Microsoft Store** (Microsoft). La tienda trata tus datos de pago según su propia política de privacidad y es quien emite el recibo.",
+                "Piano Curso solo recibe de la tienda si la compra existe, para desbloquear el contenido. No recibe tu nombre, tu correo ni tus datos de pago.",
+                "**Google Play:** para confirmar la compra, como exige Google, la app envía el código de la compra (un identificador sin datos personales) a un pequeño servidor en Cloudflare, que lo comprueba con Google. Ese servidor no guarda nada. Cloudflare, Inc. (EE. UU.) se acoge al Marco de Privacidad de Datos UE-EE. UU.",
+                "**Base legal:** la ejecución del contrato de compra (artículo 6.1.b del RGPD).",
+                "Para reembolsos o problemas con el cobro, escribe a la tienda donde compraste o a " + MAIL + ".",
+            ]),
+        ]),
         ("terceros", "Servicios de terceros", [
             ("ul", [
                 "**Alojamiento:** la web está en GitHub Pages, de GitHub, Inc. (EE. UU.). Como cualquier servidor, registra tu dirección IP por seguridad. GitHub se acoge al Marco de Privacidad de Datos UE-EE. UU. Más información en la [declaración de privacidad de GitHub](https://docs.github.com/es/site-policy/privacy-policies/github-general-privacy-statement).",
@@ -47,7 +62,7 @@ PRIVACY = {
             ("p", "Si tienes menos de 14 años, pide a tu madre, padre o tutor que escriba por ti en el formulario de contacto."),
         ]),
         ("derechos", "Tus derechos", [
-            ("p", "Puedes pedir el acceso, la rectificación o la supresión de tus datos, la limitación u oposición a su tratamiento y su portabilidad, y retirar tu consentimiento. Escribe desde el [formulario de contacto](" + WEB + "#contacto) indicando qué derecho quieres ejercer."),
+            ("p", "Puedes pedir el acceso, la rectificación o la supresión de tus datos, la limitación u oposición a su tratamiento y su portabilidad, y retirar tu consentimiento. Escribe a " + MAIL + " o desde el [formulario de contacto](" + WEB + "#contacto) indicando qué derecho quieres ejercer."),
             ("p", "Si crees que no se han respetado tus derechos, puedes reclamar ante la [Agencia Española de Protección de Datos](https://www.aepd.es)."),
         ]),
         ("cambios", "Cambios en esta política", [
@@ -110,6 +125,10 @@ MANUAL = {
                 "**Android (Chrome):** abre el menú ⋮ y pulsa **Añadir a pantalla de inicio** o **Instalar aplicación**.",
             ]),
         ]),
+        ("premium", "Premium", [
+            ("p", "La Fase 0 y el Nivel 1 de todos los estilos son gratis. **Premium** es un pago único de 2,99 € que desbloquea los Niveles 2 y 3, los niveles difíciles de los juegos y las láminas para imprimir. Se compra dentro de la app de tu tienda (App Store, Google Play o Microsoft Store) desde la pantalla Premium."),
+            ("p", "Si cambias de dispositivo, entra con la misma cuenta de la tienda y pulsa **Restaurar compra**. En la web normal Premium no se puede comprar: es una versión de prueba gratuita."),
+        ]),
         ("preguntas", "Preguntas frecuentes", [
             ("ul", [
                 "**No suena nada.** Toca primero cualquier botón de la página (los navegadores no dejan sonar nada hasta que interactúas) y comprueba que el iPhone no está en silencio.",
@@ -119,7 +138,7 @@ MANUAL = {
             ]),
         ]),
         ("ayuda", "¿Necesitas ayuda?", [
-            ("p", "Escribe desde el [formulario de contacto](" + WEB + "#contacto) y te contestaremos por correo."),
+            ("p", "Escribe a " + MAIL + " o desde el [formulario de contacto](" + WEB + "#contacto) y te contestaremos por correo."),
         ]),
     ],
 }
@@ -190,7 +209,7 @@ footer {{ text-align: center; color: var(--muted); font-size: .9rem; margin-top:
 <nav class="toc" aria-label="Índice"><ol>{toc}</ol></nav>
 <main>
 {body}</main>
-<footer><a href="index.html">Piano Curso</a> · <a href="{other[0]}">{other[1]}</a> · <a href="index.html#contacto">Contacto</a></footer>
+<footer><a href="index.html">Piano Curso</a> · <a href="{other[0]}">{other[1]}</a> · <a href="index.html#contacto">Contacto</a> · <a href="mailto:{EMAIL}">{EMAIL}</a></footer>
 </div>
 </body>
 </html>
@@ -220,6 +239,8 @@ def swift_file():
             "enum InfoContent {\n"
             f"    static let webURL = URL(string: {swift_str(WEB)})!\n"
             f"    static let contactURL = URL(string: {swift_str(WEB + '#contacto')})!\n"
+            f"    static let email = {swift_str(EMAIL)}\n"
+            f"    static let emailURL = URL(string: {swift_str('mailto:' + EMAIL)})!\n"
             f"    static let privacyURL = URL(string: {swift_str(WEB + 'privacidad.html')})!\n"
             f"    static let manualURL = URL(string: {swift_str(WEB + 'manual.html')})!\n\n"
             + swift_doc("privacy", PRIVACY) + "\n" + swift_doc("manual", MANUAL) + "}\n")
@@ -227,7 +248,7 @@ def swift_file():
 if __name__ == "__main__":
     root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
     open(os.path.join(root, "privacidad.html"), "w", encoding="utf-8").write(page_html(PRIVACY, "privacidad",
-        "Política de privacidad de Piano Curso: qué datos se tratan (solo los del formulario de contacto), para qué y cómo ejercer tus derechos según el RGPD.",
+        "Política de privacidad de Piano Curso: qué datos se tratan (los mensajes que nos envías y la confirmación de las compras), para qué y cómo ejercer tus derechos según el RGPD.",
         ("manual.html", "Manual de usuario")))
     open(os.path.join(root, "manual.html"), "w", encoding="utf-8").write(page_html(MANUAL, "manual",
         "Manual de usuario de Piano Curso: cómo usar el plan diario, el curso por estilos, la tabla de acordes, los ejercicios para MuseScore, el solfeo, el metrónomo y el progreso.",
