@@ -211,6 +211,7 @@ svg.staff { width: 100%; height: 220px; display: block; color: var(--fg); }
 .sum b { display: block; font-family: var(--font-display); font-size: 1.6rem; }
 .sess { display: flex; gap: 10px; align-items: center; padding-block: 8px; border-top: 1px solid var(--line); }
 .sess:first-child { border-top: 0; }
+.contact-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
 .field { width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font: inherit; color: inherit; }
 .field:focus { border-color: var(--accent); }
 .x { border: 0; background: transparent; color: var(--muted); font-size: 1.1rem; padding: 4px 8px; border-radius: 8px; }
@@ -238,7 +239,7 @@ svg.staff { width: 100%; height: 220px; display: block; color: var(--fg); }
 <h1>Piano Curso: aprende piano desde cero, gratis</h1>
 <p>Plan diario de 15 a 60 minutos con solfeo, técnica y repertorio. Fase 0 para principiantes absolutos y niveles 1 a 3 de piano clásico, blues, jazz, pop y rock.</p>
 <ul><li>Tabla de acordes: 12 tipos de acorde en las 12 notas, para ver y escuchar.</li><li>21 ejercicios originales que se descargan en MusicXML para abrirlos en MuseScore.</li><li>Lectura en clave de Sol y de Fa, teclado para encontrar notas y oído de intervalos.</li><li>Metrónomo, cronómetro de práctica y seguimiento del progreso.</li><li>Enlaces a partituras gratuitas de dominio público en IMSLP, MuseScore y Mutopia.</li></ul>
-<p>Activa JavaScript para usar la aplicación. También tienes los <a href="juegos.html">juegos para memorizar las notas</a>.</p>
+<p>Activa JavaScript para usar la aplicación. También tienes los <a href="juegos.html">juegos para memorizar las notas</a>, el <a href="manual.html">manual de usuario</a> y la <a href="privacidad.html">política de privacidad</a>.</p>
 </div></noscript>
 <main id="app" aria-live="polite"></main>
 <nav class="tabs" aria-label="Secciones"><div class="in" id="tabs"></div></nav>
@@ -685,22 +686,29 @@ function contactCard() {
   return `<a class="plain row" href="#contacto" style="text-decoration:none;color:inherit" id="tarjeta-contacto">
     <span class="badge" style="--tint:#5856d6;width:38px;height:38px">${icon("mail", 18)}</span>
     <span style="flex:1;min-width:0"><b>Contacto</b><br><span class="tiny muted">¿Una duda, un error o una idea? Escríbenos y te contestamos por correo.</span></span>
-    ${icon("chev", 18, "var(--muted)")}</a>`;
+    ${icon("chev", 18, "var(--muted)")}</a>
+  <div class="tiny muted" style="text-align:center"><a href="manual.html">Manual de usuario</a> · <a href="privacidad.html">Política de privacidad</a></div>`;
 }
 function viewContact() {
   const ready = !!WEB3FORMS_KEY;
   app.innerHTML = topbar("Contacto", "hoy") + `
-  <p class="muted" style="margin:0">¿Una duda, algo que no funciona o una idea para Piano Curso? Escribe aquí. El mensaje llega por correo y la respuesta te llegará a la dirección que pongas.</p>
-  <form class="plain stack" id="contact-form" novalidate>
+  <p class="muted" style="margin:0">¿Una duda, algo que no funciona o una idea para Piano Curso? Mira primero el manual o escríbenos: te contestamos por correo.</p>
+  <div class="contact-actions">
+    <button class="btn big" type="button" id="c-open" style="--tint:#5856d6" aria-expanded="false" aria-controls="contact-form">${icon("mail", 20)} Formulario de contacto</button>
+    <a class="btn big soft" href="manual.html" style="--tint:#5856d6;text-decoration:none">${icon("doc", 20)} Manual de usuario</a>
+  </div>
+  <form class="plain stack" id="contact-form" novalidate hidden>
     <label class="stack" style="gap:4px" for="c-nombre"><b>Tu nombre</b><input class="field" id="c-nombre" name="name" autocomplete="name" maxlength="80" required></label>
     <label class="stack" style="gap:4px" for="c-email"><b>Tu correo electrónico</b><input class="field" id="c-email" name="email" type="email" autocomplete="email" maxlength="120" required><span class="tiny muted">Solo para contestarte. No se publica ni se comparte.</span></label>
     <label class="stack" style="gap:4px" for="c-tipo"><b>¿Sobre qué es?</b><select id="c-tipo" name="tipo"><option>Una duda</option><option>Algo no funciona</option><option>Una idea o sugerencia</option><option>Otra cosa</option></select></label>
     <label class="stack" style="gap:4px" for="c-mensaje"><b>Tu mensaje</b><textarea class="field" id="c-mensaje" name="message" rows="6" maxlength="4000" required placeholder="Si algo falla, dinos en qué pantalla y con qué dispositivo."></textarea></label>
     <input type="checkbox" name="botcheck" id="c-bot" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
-    <label class="row tiny" for="c-ok" style="align-items:flex-start"><input type="checkbox" id="c-ok" required style="margin-top:2px"><span>Acepto que mi nombre y mi correo se usen solo para responder a este mensaje.</span></label>
+    <label class="row tiny" for="c-ok" style="align-items:flex-start"><input type="checkbox" id="c-ok" required style="margin-top:2px"><span>Acepto que mi nombre y mi correo se usen solo para responder a este mensaje, según la <a href="privacidad.html" target="_blank" rel="noopener">política de privacidad</a>.</span></label>
     <div class="row wrap"><button class="btn" type="submit" id="c-send">${icon("mail", 18)} Enviar mensaje</button><span class="small" id="c-status" role="status"></span></div>
   </form>
-  <div class="tiny muted">¿Prefieres GitHub? También puedes <a href="${CONTACT_ISSUE_URL}" target="_blank" rel="noopener">abrir una incidencia pública</a>.</div>`;
+  <div class="tiny muted">¿Prefieres GitHub? También puedes <a href="${CONTACT_ISSUE_URL}" target="_blank" rel="noopener">abrir una incidencia pública</a>. Lee cómo tratamos tus datos en la <a href="privacidad.html">política de privacidad</a>.</div>`;
+  const openBtn = document.getElementById("c-open");
+  openBtn.onclick = () => { const f = document.getElementById("contact-form"); f.hidden = !f.hidden; openBtn.setAttribute("aria-expanded", String(!f.hidden)); if (!f.hidden) document.getElementById("c-nombre").focus(); };
   const form = document.getElementById("contact-form"), status = document.getElementById("c-status"), send = document.getElementById("c-send");
   const say = (t, ok) => { status.textContent = t; status.style.color = ok ? "var(--ok)" : "#e5484d"; };
   form.addEventListener("submit", async e => {
