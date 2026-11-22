@@ -684,6 +684,7 @@ function blockCard(b, color) {
 // La clave de acceso NO es tu correo: puede estar en el código público sin que nadie vea tu dirección.
 // Mientras esté vacía, el formulario ofrece abrir una incidencia en GitHub.
 const WEB3FORMS_KEY = "c92aed91-f52c-4996-8320-05bb95263eff";
+const CONTACT_EMAIL = "cursopiano@outlook.es";
 const CONTACT_ISSUE_URL = "https://github.com/mhowani/piano-curso/issues/new?template=contacto.yml";
 function contactCard() {
   return `<a class="plain row" href="#contacto" style="text-decoration:none;color:inherit" id="tarjeta-contacto">
@@ -709,6 +710,7 @@ function viewContact() {
     <label class="row tiny" for="c-ok" style="align-items:flex-start"><input type="checkbox" id="c-ok" required style="margin-top:2px"><span>Acepto que mi nombre y mi correo se usen solo para responder a este mensaje, según la <a href="privacidad.html" target="_blank" rel="noopener">política de privacidad</a>.</span></label>
     <div class="row wrap"><button class="btn" type="submit" id="c-send">${icon("mail", 18)} Enviar mensaje</button><span class="small" id="c-status" role="status"></span></div>
   </form>
+  <div class="small">También puedes escribirnos directamente a <a href="mailto:${CONTACT_EMAIL}">${CONTACT_EMAIL}</a>.</div>
   <div class="tiny muted">¿Prefieres GitHub? También puedes <a href="${CONTACT_ISSUE_URL}" target="_blank" rel="noopener">abrir una incidencia pública</a>. Lee cómo tratamos tus datos en la <a href="privacidad.html">política de privacidad</a>.</div>`;
   const openBtn = document.getElementById("c-open");
   openBtn.onclick = () => { const f = document.getElementById("contact-form"); f.hidden = !f.hidden; openBtn.setAttribute("aria-expanded", String(!f.hidden)); if (!f.hidden) document.getElementById("c-nombre").focus(); };
