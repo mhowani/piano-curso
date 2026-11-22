@@ -1,6 +1,6 @@
 // Service worker de Piano Curso: permite instalar la app y usarla sin conexión.
 // Al cambiar archivos de la web, sube VERSION para que los dispositivos descarguen lo nuevo.
-const VERSION = 'piano-curso-v3';
+const VERSION = 'piano-curso-v4';
 const BASICOS = ['./', 'index.html', 'juegos.html', 'manual.html', 'privacidad.html',
   'site.webmanifest', 'icon.png', 'iconos/icon-192.png', 'iconos/icon-512.png'];
 
