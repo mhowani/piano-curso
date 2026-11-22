@@ -115,6 +115,42 @@ input[type=range] { width: 100%; accent-color: #fff; }
 .gtile b { font-family: var(--font-display); font-size: 1.05rem; font-weight: 900; line-height: 1.15; }
 .gtile small { font-size: .78rem; opacity: .92; }
 
+/* Círculo de quintas */
+.cfbanner { display: flex; align-items: center; gap: 14px; text-decoration: none; color: #fff; border-radius: 24px; padding: 16px 18px; background: linear-gradient(120deg, #2d2b3f, #6e6e6e); box-shadow: 0 10px 26px rgba(40, 30, 90, .22); }
+.cfbanner h2 { color: #fff; font-size: 1.4rem; font-weight: 900; }
+.cf-mini { width: 62px; height: 62px; flex: none; border-radius: 50%; border: 3px solid #fff;
+  background: conic-gradient(from -15deg, #fd0050 0 30deg, #0b00ff 0 60deg, #ff9f00 0 90deg, #6c58af 0 120deg, #ffe320 0 150deg, #e92ea3 0 180deg, #bdde59 0 210deg, #ff9f00 0 240deg, #6c58af 0 270deg, #ffe320 0 300deg, #e92ea3 0 330deg, #bdde59 0 360deg);
+  box-shadow: inset 0 0 0 12px rgba(0,0,0,.12); }
+.cf-wrap { align-items: stretch; }
+.cf-stage { width: 100%; max-width: 440px; margin: 0 auto; }
+.cf-svg { width: 100%; height: auto; display: block; touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; outline: none; }
+.cf-svg.dragging { cursor: grabbing; }
+.cf-svg:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; border-radius: 50%; }
+.cf-svg .cf-sec { cursor: pointer; }
+.cf-svg .cf-o { fill: #fff; font-family: var(--font-display); font-weight: 900; font-size: 25px; text-anchor: middle; paint-order: stroke; stroke: rgba(0,0,0,.18); stroke-width: 1.5px; }
+.cf-svg .cf-i { fill: #fff; font-family: var(--font-display); font-weight: 800; font-size: 14px; text-anchor: middle; paint-order: stroke; stroke: rgba(0,0,0,.2); stroke-width: 1.2px; }
+.cf-svg .cf-veil { fill: var(--surface); opacity: .62; }
+.cf-svg .cf-tab text, .cf-svg .cf-hubt { fill: #fff; font-family: var(--font-display); font-weight: 900; text-anchor: middle; }
+.cf-keyname { font-family: var(--font-display); font-size: 1.3rem; font-weight: 900; }
+.cf-wrap .round { font-size: 1.6rem; line-height: 1; font-weight: 700; }
+.cf-scale { display: flex; gap: 6px; flex-wrap: wrap; }
+.cf-scale span { min-width: 44px; text-align: center; padding: 6px 8px; border-radius: 10px; font-weight: 800; color: #1d1b2e; background: color-mix(in srgb, var(--c) 35%, var(--surface)); border: 2px solid var(--c); }
+.cf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.cf-chord { position: relative; border: 0; text-align: left; border-radius: 16px; padding: 10px; display: flex; flex-direction: column; gap: 4px; background: color-mix(in srgb, var(--c) 14%, var(--surface)); border-top: 5px solid var(--c); }
+.cf-chord b { font-family: var(--font-display); font-size: 1.25rem; }
+.cf-chord svg.kb { width: 100%; height: auto; border-radius: 4px; }
+.cf-roman { position: absolute; right: 10px; top: 8px; min-width: 30px; height: 30px; padding: 0 6px; border-radius: 15px; background: #6e6e6e; color: #fff; display: grid; place-items: center; font-family: var(--font-display); font-weight: 900; font-size: .95rem; }
+.cf-boxes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.cf-box { border: 0; border-radius: 14px; padding: 10px 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; background: color-mix(in srgb, var(--c) 18%, var(--surface)); border-bottom: 5px solid var(--c); transition: transform .12s, box-shadow .12s; }
+.cf-box span { font-family: var(--font-display); font-weight: 900; color: var(--muted); }
+.cf-box b { font-family: var(--font-display); font-size: 1.1rem; }
+.cf-box.on { transform: translateY(-3px) scale(1.04); box-shadow: 0 6px 16px color-mix(in srgb, var(--c) 55%, transparent); background: color-mix(in srgb, var(--c) 40%, var(--surface)); }
+.cf-answers { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 10px; }
+.cf-answers button { border: 1px solid var(--line); border-bottom: 5px solid var(--c); background: var(--surface); border-radius: 14px; min-height: 58px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.cf-answers button b { font-family: var(--font-display); font-size: 1.2rem; }
+.cf-opts { grid-template-columns: repeat(2, 1fr); }
+.cf-q { font-size: 1.15rem; }
+
 /* Curso */
 .styles { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
 .stile { text-decoration: none; min-height: 168px; display: flex; flex-direction: column; gap: 6px; border-radius: 22px; padding: 16px; }
@@ -570,6 +606,7 @@ function route() {
   else if (h === "teclado") { tab = "solfeo"; viewKeyboard(); }
   else if (h === "lectura-sol" || h === "lectura-fa") { tab = "solfeo"; viewReading(h === "lectura-sol" ? "treble" : "bass"); }
   else if (h === "intervalos") { tab = "solfeo"; viewIntervals(); }
+  else if (h === "circulo") { tab = "solfeo"; viewCircle(); }
   else if (h === "progreso") { tab = "progreso"; viewProgress(); }
   else if (h === "contacto") { tab = ""; viewContact(); }
   else if (h === "premium") { tab = "curso"; viewPremium(); }
@@ -702,6 +739,7 @@ function viewCourse() {
   app.innerHTML = `<h1>Curso</h1>
   ${premiumCard()}
   <a class="chordlink" href="#acordes">${icon("keys", 30)}<div style="flex:1"><h3>Tabla de acordes</h3><div class="tiny" style="opacity:.9">12 tipos × 12 notas, para ver y escuchar</div></div>${icon("chev", 20)}</a>
+  ${circleBanner()}
   ${sheetsLink()}
   <div class="styles">${STYLE_IDS.map(id => {
     const s = STYLES[id], all = lessonsOf(id), done = all.filter(l => isDone(l.id)).length;
@@ -860,6 +898,7 @@ function viewSolfeo() {
   app.innerHTML = `<h1>Solfeo</h1>
   <div class="section-title">Fase 0</div><div class="plain menu">${item("#teclado", "Teclado: encuentra las notas", "keys", "#34c759")}</div>
   ${gamesBlock()}
+  <div class="section-title">Armonía</div>${circleBanner()}
   <div class="section-title">Lectura</div><div class="plain menu">${item("#lectura-sol", "Lectura en clave de Sol", "note", "#af52de")}${item("#lectura-fa", "Lectura en clave de Fa", "note", "#5856d6")}</div>
   <div class="section-title">Oído</div><div class="plain menu">${item("#intervalos", "Oído: intervalos", "ear", "#ff9500")}</div>
   <div class="section-title">Metrónomo</div><div class="plain menu"><a href="#" id="metro-open"><span class="badge" style="--tint:#007aff">${icon("timer", 17)}</span><span style="flex:1">Cronómetro y metrónomo</span>${icon("chev", 18, "var(--muted)")}</a></div>
@@ -970,6 +1009,431 @@ function viewIntervals() {
   next(false); draw();
 }
 
+// ───────────────────────────── Círculo de quintas (con el agrupador giratorio de Rubén) ─────────────────────────────
+// Casillas en el sentido del reloj desde arriba. Fuera, tonalidades mayores; dentro, su relativo menor.
+// El agrupador marca los 7 acordes de la tonalidad: IV · I · V fuera y ii · vi · iii · vii° dentro.
+const CF_LETTERS = ["Do", "Re", "Mi", "Fa", "Sol", "La", "Si"], CF_LPC = [0, 2, 4, 5, 7, 9, 11];
+const CF_COLOR = { Do: "#fd0050", Re: "#ff9f00", Mi: "#ffe320", Fa: "#bdde59", Sol: "#0b00ff", La: "#6c58af", Si: "#e92ea3" };
+const CF_MINOR_DO = "#fe0002";
+// Tónica de cada casilla: [letra, alteración]. La casilla 6 es Sol♭ (= Fa♯).
+const CF_KEYS = [[0, 0], [4, 0], [1, 0], [5, 0], [2, 0], [6, 0], [4, -1], [1, -1], [5, -1], [2, -1], [6, -1], [3, 0]];
+const CF_ALT = { 6: "Fa♯" }, CF_ALT_MIN = { 6: "re♯" };
+const CF_ACC = a => a === 1 ? "♯" : a === -1 ? "♭" : a === 2 ? "𝄪" : a === -2 ? "𝄫" : "";
+const CF_MAJ = [0, 2, 4, 5, 7, 9, 11];
+const CF_DEG = [
+  { r: "I", q: "M" }, { r: "ii", q: "m" }, { r: "iii", q: "m" }, { r: "IV", q: "M" }, { r: "V", q: "M" }, { r: "vi", q: "m" }, { r: "vii°", q: "d" },
+];
+// Dónde está cada grado en el círculo respecto a la casilla del I: [anillo, desplazamiento]
+const CF_POS = { 0: ["o", 0], 3: ["o", -1], 4: ["o", 1], 5: ["i", 0], 1: ["i", -1], 2: ["i", 1], 6: ["i", 2] };
+const cfMod = (n, m = 12) => ((n % m) + m) % m;
+const cfName = (L, a) => CF_LETTERS[L] + CF_ACC(a);
+function cfScale(k) {
+  const [tl, ta] = CF_KEYS[k], tpc = cfMod(CF_LPC[tl] + ta);
+  return CF_MAJ.map((iv, d) => { const L = (tl + d) % 7, pc = cfMod(tpc + iv); return { L, a: cfMod(pc - CF_LPC[L] + 6) - 6, pc, name: cfName(L, cfMod(pc - CF_LPC[L] + 6) - 6) }; });
+}
+function cfChords(k) {
+  const sc = cfScale(k);
+  return CF_DEG.map((g, d) => {
+    const n = [sc[d], sc[(d + 2) % 7], sc[(d + 4) % 7]], root = n[0];
+    let base = 48 + root.pc; if (base > 54) base -= 12; // graves entre Do3 y Fa♯3
+    const top = 60 + root.pc;
+    const iv = g.q === "M" ? [0, 4, 7] : g.q === "m" ? [0, 3, 7] : [0, 3, 6];
+    const suf = g.q === "M" ? "" : g.q === "m" ? "m" : " dim";
+    const en = ["C", "D", "E", "F", "G", "A", "B"][root.L] + CF_ACC(root.a) + (g.q === "M" ? "" : g.q === "m" ? "m" : "°");
+    const [ring, off] = CF_POS[d];
+    return { d, roman: g.r, q: g.q, name: root.name + suf, en, notes: n.map(x => x.name), color: cfNoteColor(root.L, g.q !== "M"),
+      midi: iv.map(i => top + i), bass: base, ring, idx: cfMod(k + off), quality: g.q === "M" ? "mayor" : g.q === "m" ? "menor" : "disminuido" };
+  });
+}
+const cfNoteColor = (L, minor) => L === 0 && minor ? CF_MINOR_DO : CF_COLOR[CF_LETTERS[L]];
+const cfKeyName = k => cfName(...CF_KEYS[k]);
+const cfMinorName = k => { const s = cfScale(k)[5]; return s.name.toLowerCase(); };
+function cfSignature(k) {
+  if (k === 0) return { n: 0, text: "Sin alteraciones" };
+  const sharps = ["Fa", "Do", "Sol", "Re", "La", "Mi", "Si"], flats = ["Si", "Mi", "La", "Re", "Sol", "Do", "Fa"];
+  if (k <= 5) return { n: k, sign: "♯", text: `${k} ${k === 1 ? "sostenido" : "sostenidos"}: ${sharps.slice(0, k).map(x => x + "♯").join(", ")}` };
+  const n = 12 - k; // casilla 6 = 6 bemoles (o 6 sostenidos si la escribes como Fa♯)
+  return { n, sign: "♭", text: `${n} ${n === 1 ? "bemol" : "bemoles"}: ${flats.slice(0, n).map(x => x + "♭").join(", ")}` };
+}
+const CF_PROGS = [
+  { id: "pop", name: "La del pop", style: "Pop", deg: [0, 4, 5, 3], tip: "La de cientos de canciones de radio. Suena alegre y con empuje." },
+  { id: "rock", name: "Rock y folk", style: "Rock", deg: [0, 3, 4, 0], tip: "Los tres acordes mayores del agrupador: con ellos tocas miles de canciones." },
+  { id: "50s", name: "Años 50", style: "Pop", deg: [0, 5, 3, 4], tip: "La de las baladas de los 50 y 60 (doo-wop)." },
+  { id: "triste", name: "Pop melancólico", style: "Pop", deg: [5, 3, 0, 4], tip: "Empieza en el vi, así que suena más triste aunque use los mismos acordes que «La del pop»." },
+  { id: "jazz", name: "ii – V – I", style: "Jazz", deg: [1, 4, 0, 0], tip: "La base del jazz: un acorde menor de dentro, el V y vuelta a casa." },
+  { id: "clasica", name: "Cadencia perfecta", style: "Clásica", deg: [0, 3, 4, 0], tip: "El final típico de las piezas clásicas: I – IV – V – I. El V «pide» volver al I." },
+  { id: "canon", name: "Canon", style: "Clásica", deg: [0, 4, 5, 2, 3, 0, 3, 4], tip: "La del Canon de Pachelbel (1680, dominio público). Baja por el círculo y vuelve." },
+  { id: "blues", name: "Blues de 12 compases", style: "Blues", deg: [0, 0, 0, 0, 3, 3, 0, 0, 4, 3, 0, 4], tip: "Solo usa I, IV y V. Cuenta 4 tiempos en cada compás." },
+];
+const CF_LEVELS = [
+  { name: "Fácil", deg: [0, 3, 4], desc: "I, IV y V" },
+  { name: "Medio", deg: [0, 1, 3, 4, 5], desc: "+ ii y vi", premium: true },
+  { name: "Difícil", deg: [0, 1, 2, 3, 4, 5, 6], desc: "Los 7 y tonalidad al azar", premium: true },
+];
+const CF_EASY_KEYS = [10, 11, 0, 1, 2]; // hasta 2 alteraciones
+const cfS = { k: 0, angle: 0, tab: "explorar", prog: "pop", tempo: 80, loop: true, level: 0, quizAll: false, focus: true };
+try { Object.assign(cfS, JSON.parse(localStorage.getItem("pianocurso.circulo") || "{}")); } catch (e) {}
+const cfSave = () => { try { const { k, tab, prog, tempo, loop, level, quizAll, focus } = cfS; localStorage.setItem("pianocurso.circulo", JSON.stringify({ k, tab, prog, tempo, loop, level, quizAll, focus })); } catch (e) {} };
+
+// Dibujo
+const CX = 200, CY = 200, R_OUT = 170, R_MID = 116, R_HUB = 30;
+const cfPt = (r, a) => [CX + r * Math.sin(a * Math.PI / 180), CY - r * Math.cos(a * Math.PI / 180)];
+function cfSector(r0, r1, a0, a1) {
+  const [x0, y0] = cfPt(r1, a0), [x1, y1] = cfPt(r1, a1), [x2, y2] = cfPt(r0, a1), [x3, y3] = cfPt(r0, a0);
+  return r0 > 0 ? `M${x0} ${y0}A${r1} ${r1} 0 0 1 ${x1} ${y1}L${x2} ${y2}A${r0} ${r0} 0 0 0 ${x3} ${y3}Z` : `M${CX} ${CY}L${x0} ${y0}A${r1} ${r1} 0 0 1 ${x1} ${y1}Z`;
+}
+function cfLabelOuter(i) {
+  const [x, y] = cfPt(143, i * 30), [L, a] = CF_KEYS[i];
+  const t = (s, dy, fs = 25) => `<tspan x="${x}" dy="${dy}" font-size="${fs}">${s}</tspan>`;
+  if (CF_ALT[i]) return `<text x="${x}" y="${y - 12}" class="cf-o">${t(cfName(L, a), 0, 21)}${t(CF_ALT[i], 23, 21)}</text>`;
+  return `<text x="${x}" y="${y + 9}" class="cf-o">${cfName(L, a)}</text>`;
+}
+function cfLabelInner(i) {
+  const [x, y] = cfPt(80, i * 30), name = cfMinorName(i), m = `<tspan font-size="10" dy="3">m</tspan>`;
+  if (CF_ALT_MIN[i]) return `<text x="${x}" y="${y - 6}" class="cf-i"><tspan x="${x}">${name}${m}</tspan><tspan x="${x}" dy="14">${CF_ALT_MIN[i]}${m}</tspan></text>`;
+  return `<text x="${x}" y="${y + 5}" class="cf-i">${name}${m}</text>`;
+}
+function circleSVG() {
+  let s = `<svg class="cf-svg" id="cf-svg" viewBox="0 0 400 400" role="img" aria-label="Círculo de quintas con el agrupador en ${cfKeyName(cfS.k)} mayor">
+  <defs><linearGradient id="cf-g6" x1="0" x2="1"><stop offset=".1" stop-color="${CF_COLOR.Sol}"/><stop offset=".9" stop-color="${CF_COLOR.Fa}"/></linearGradient>
+  <linearGradient id="cf-g6m" x1="0" x2="0" y1="0" y2="1"><stop offset=".2" stop-color="${CF_COLOR.Mi}"/><stop offset=".9" stop-color="${CF_COLOR.Re}"/></linearGradient>
+  <filter id="cf-sh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity=".35"/></filter></defs>
+  <circle cx="${CX}" cy="${CY}" r="${R_OUT + 6}" fill="#fff" stroke="#1d1b2e" stroke-width="1"/>`;
+  for (let i = 0; i < 12; i++) {
+    const a0 = i * 30 - 15, a1 = i * 30 + 15, [L] = CF_KEYS[i], mL = cfScale(i)[5].L;
+    s += `<path class="cf-sec" data-ring="o" data-i="${i}" d="${cfSector(R_MID, R_OUT, a0, a1)}" fill="${i === 6 ? "url(#cf-g6)" : CF_COLOR[CF_LETTERS[L]]}"/>`;
+    s += `<path class="cf-sec" data-ring="i" data-i="${i}" d="${cfSector(0, R_MID, a0, a1)}" fill="${i === 6 ? "url(#cf-g6m)" : cfNoteColor(mL, true)}"/>`;
+  }
+  for (let i = 0; i < 12; i++) { const [x, y] = cfPt(R_OUT + 1, i * 30 + 15); s += `<line x1="${CX}" y1="${CY}" x2="${x}" y2="${y}" stroke="#fff" stroke-width="5" pointer-events="none"/>`; }
+  s += `<g pointer-events="none">${Array.from({ length: 12 }, (_, i) => cfLabelOuter(i) + cfLabelInner(i)).join("")}</g>`;
+  s += `<g id="cf-dim" pointer-events="none"></g><path id="cf-hl" d="" fill="none" stroke="#fff" stroke-width="6" filter="url(#cf-sh)" pointer-events="none"/>`;
+  // Agrupador (dibujado con el I arriba y girado con transform)
+  const [ax, ay] = cfPt(R_OUT + 4, -45), [bx, by] = cfPt(R_OUT + 4, 45), [cx, cy] = cfPt(R_MID, 45), [dx, dy] = cfPt(R_MID, 75), [ex, ey] = cfPt(R_HUB, 75), [fx, fy] = cfPt(R_HUB, -45);
+  s += `<g id="cf-ov" class="cf-ov"><path d="M${ax} ${ay}A${R_OUT + 4} ${R_OUT + 4} 0 0 1 ${bx} ${by}L${cx} ${cy}A${R_MID} ${R_MID} 0 0 1 ${dx} ${dy}L${ex} ${ey}A${R_HUB} ${R_HUB} 0 0 0 ${fx} ${fy}Z" fill="none" stroke="#6e6e6e" stroke-width="7" stroke-linejoin="round"/>
+    <circle cx="${CX}" cy="${CY}" r="${R_HUB}" fill="#6e6e6e"/></g>`;
+  s += `<g id="cf-tabs"></g><text id="cf-hub" x="${CX}" y="${CY + 5}" class="cf-hubt" pointer-events="none"></text></svg>`;
+  return s;
+}
+const CF_TABS = [["IV", "o", -1], ["I", "o", 0], ["V", "o", 1], ["ii", "i", -1], ["vi", "i", 0], ["iii", "i", 1], ["vii°", "i", 2]];
+function cfSetAngle(a) {
+  cfS.angle = a;
+  const ov = document.getElementById("cf-ov"), tabs = document.getElementById("cf-tabs"); if (!ov) return;
+  ov.setAttribute("transform", `rotate(${a} ${CX} ${CY})`);
+  tabs.innerHTML = CF_TABS.map(([t, ring, off]) => {
+    const [x, y] = cfPt(ring === "o" ? R_OUT + 6 : R_MID, a + off * 30), big = ring === "o";
+    return `<g class="cf-tab"><circle cx="${x}" cy="${y}" r="${big ? 17 : 14}" fill="#6e6e6e"/><text x="${x}" y="${y + (big ? 5.5 : 4.5)}" font-size="${big ? 15 : 12}">${t}</text></g>`;
+  }).join("");
+}
+function cfMarkKey() {
+  const dim = document.getElementById("cf-dim"); if (!dim) return;
+  const k = cfS.k, inO = new Set([-1, 0, 1].map(o => cfMod(k + o))), inI = new Set([-1, 0, 1, 2].map(o => cfMod(k + o)));
+  let s = "";
+  if (cfS.focus) for (let i = 0; i < 12; i++) {
+    if (!inO.has(i)) s += `<path d="${cfSector(R_MID, R_OUT, i * 30 - 15, i * 30 + 15)}" class="cf-veil"/>`;
+    if (!inI.has(i)) s += `<path d="${cfSector(0, R_MID, i * 30 - 15, i * 30 + 15)}" class="cf-veil"/>`;
+  }
+  dim.innerHTML = s;
+  document.getElementById("cf-svg").setAttribute("aria-label", `Círculo de quintas con el agrupador en ${cfKeyName(k)} mayor`);
+}
+function cfHighlight(ring, i) {
+  const hl = document.getElementById("cf-hl"); if (!hl) return;
+  hl.setAttribute("d", ring == null ? "" : ring === "o" ? cfSector(R_MID + 3, R_OUT - 3, i * 30 - 12, i * 30 + 12) : cfSector(R_HUB + 4, R_MID - 3, i * 30 - 11, i * 30 + 11));
+}
+let cfAnim = 0;
+function cfRotateTo(k, onDone) {
+  const target = k * 30; let from = cfS.angle;
+  let diff = cfMod(target - from, 360); if (diff > 180) diff -= 360;
+  const to = from + diff, t0 = performance.now(), dur = Math.min(600, 120 + Math.abs(diff) * 3);
+  cancelAnimationFrame(cfAnim);
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const step = now => {
+    const p = reduce ? 1 : Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+    cfSetAngle(from + diff * e);
+    if (p < 1) cfAnim = requestAnimationFrame(step); else { cfSetAngle(cfMod(to, 360)); onDone && onDone(); }
+  };
+  cfAnim = requestAnimationFrame(step);
+}
+function cfPlay(ch, secs = 1.3) { playMidi([ch.bass, ...ch.midi], secs); cfHighlight(ch.ring, ch.idx); }
+function cfChordAt(ring, i) { // acorde de cualquier casilla (para tocarlo al pulsarla)
+  return ring === "o" ? cfChords(i)[0] : cfChords(i)[5];
+}
+const cfLocked = lv => CF_LEVELS[lv].premium && !premium;
+
+function viewCircle() {
+  let seq = null; // reproducción de progresiones
+  const stopSeq = () => { if (seq) { clearTimeout(seq.t); seq = null; } cfHighlight(null); app.querySelectorAll(".cf-box.on").forEach(b => b.classList.remove("on")); const pb = document.getElementById("cf-pplay"); if (pb) pb.innerHTML = `${icon("play", 18)} Escuchar`; };
+  onLeave(() => { stopSeq(); cancelAnimationFrame(cfAnim); });
+  const quiz = { q: null, ok: 0, total: 0, fb: "" }, guess = { target: null, key: cfS.k, ok: 0, total: 0, fb: "Pulsa «Escuchar». Primero suena el I (la casa) y después el acorde misterioso.", answered: false };
+
+  app.innerHTML = topbar("Círculo de quintas", "solfeo") + `
+  <section class="plain stack cf-wrap">
+    <div class="cf-stage">${circleSVG()}</div>
+    <div class="row" style="justify-content:center;gap:14px">
+      <button class="round" id="cf-left" style="--tint:#6e6e6e" aria-label="Girar a la izquierda (un bemol más)">‹</button>
+      <div style="text-align:center;min-width:150px"><div class="tiny muted">Agrupador en</div><b id="cf-keyname" class="cf-keyname"></b></div>
+      <button class="round" id="cf-right" style="--tint:#6e6e6e" aria-label="Girar a la derecha (un sostenido más)">›</button>
+    </div>
+    <div class="tiny muted" style="text-align:center">Arrastra el agrupador gris o usa las flechas para elegir tonalidad. Toca cualquier casilla para oír su acorde.</div>
+    <label class="toggle" for="cf-focus"><span class="small">Atenuar lo que queda fuera del agrupador</span><input id="cf-focus" type="checkbox" ${cfS.focus ? "checked" : ""}></label>
+  </section>
+  <div class="seg" role="tablist" id="cf-seg">${[["explorar", "Explorar"], ["progresiones", "Progresiones"], ["adivina", "Adivina"], ["preguntas", "Preguntas"]].map(([id, n]) => `<button data-tab="${id}" class="${cfS.tab === id ? "on" : ""}">${n}</button>`).join("")}</div>
+  <div id="cf-panel" class="stack"></div>`;
+
+  const svg = document.getElementById("cf-svg");
+  const setKey = (k, play) => {
+    cfS.k = cfMod(k); cfSave(); stopSeq();
+    cfRotateTo(cfS.k); cfMarkKey(); header();
+    if (play) cfPlay(cfChords(cfS.k)[0]);
+    if (cfS.tab !== "adivina" && cfS.tab !== "preguntas") panel();
+    else if (cfS.tab === "adivina" && cfS.level < 2) { guess.key = cfS.k; guess.target = null; guess.fb = `Ahora en ${cfKeyName(cfS.k)} mayor. Pulsa «Escuchar».`; panel(); }
+  };
+  const header = () => {
+    const k = cfS.k; document.getElementById("cf-keyname").innerHTML = `<span style="color:${CF_COLOR[CF_LETTERS[CF_KEYS[k][0]]]}">●</span> ${cfKeyName(k)} mayor${CF_ALT[k] ? ` <span class="tiny muted">(= ${CF_ALT[k]})</span>` : ""}`;
+    document.getElementById("cf-hub").textContent = "";
+  };
+  document.getElementById("cf-left").onclick = () => setKey(cfS.k - 1, true);
+  document.getElementById("cf-right").onclick = () => setKey(cfS.k + 1, true);
+  document.getElementById("cf-focus").onchange = e => { cfS.focus = e.target.checked; cfSave(); cfMarkKey(); };
+
+  // Arrastrar para girar; pulsar sin mover = oír la casilla
+  const angOf = e => { const r = svg.getBoundingClientRect(), x = e.clientX - r.left - r.width / 2, y = e.clientY - r.top - r.height / 2; return { a: Math.atan2(x, -y) * 180 / Math.PI, d: Math.hypot(x, y) / (r.width / 2) * 200 }; };
+  let drag = null;
+  svg.addEventListener("pointerdown", e => {
+    const p = angOf(e); drag = { x: e.clientX, y: e.clientY, a0: p.a, start: cfS.angle, moved: false, target: e.target };
+    cancelAnimationFrame(cfAnim); svg.setPointerCapture(e.pointerId);
+  });
+  svg.addEventListener("pointermove", e => {
+    if (!drag) return;
+    if (!drag.moved && Math.hypot(e.clientX - drag.x, e.clientY - drag.y) < 8) return;
+    drag.moved = true; svg.classList.add("dragging");
+    let da = angOf(e).a - drag.a0; cfSetAngle(drag.start + da);
+  });
+  const end = e => {
+    if (!drag) return; const d = drag; drag = null; svg.classList.remove("dragging");
+    if (d.moved) { setKey(Math.round(cfS.angle / 30), true); return; }
+    const sec = d.target.closest && d.target.closest(".cf-sec");
+    if (sec) { const ch = cfChordAt(sec.dataset.ring, +sec.dataset.i); cfPlay(ch); if (cfS.tab === "preguntas") quizAnswerBySector(sec.dataset.ring, +sec.dataset.i); }
+    else if (angOf(e).d < R_HUB) cfPlay(cfChords(cfS.k)[0]);
+  };
+  svg.addEventListener("pointerup", end); svg.addEventListener("pointercancel", () => { if (drag && drag.moved) setKey(Math.round(cfS.angle / 30)); drag = null; });
+  svg.addEventListener("keydown", e => { if (e.key === "ArrowRight") setKey(cfS.k + 1, true); if (e.key === "ArrowLeft") setKey(cfS.k - 1, true); });
+  svg.setAttribute("tabindex", "0");
+
+  document.getElementById("cf-seg").onclick = e => {
+    const b = e.target.closest("[data-tab]"); if (!b) return;
+    stopSeq(); cfS.tab = b.dataset.tab; cfSave();
+    app.querySelectorAll("#cf-seg button").forEach(x => x.classList.toggle("on", x === b)); panel();
+  };
+
+  const P = () => document.getElementById("cf-panel");
+  const chordBtn = (c, extra = "") => `<button class="cf-chord" data-cd="${c.d}" style="--c:${c.color}" ${extra}>
+      <span class="cf-roman">${c.roman}</span><b>${c.name}</b><span class="tiny muted">${c.en} · ${c.quality}</span>
+      ${chordSVG({ symbol: c.en, midi: c.midi }, c.color === CF_COLOR.Mi || c.color === CF_COLOR.Fa ? "#8a7a00" : c.color, true)}
+      <span class="tiny">${c.notes.join(" – ")}</span></button>`;
+
+  function panel() {
+    if (cfS.tab === "explorar") explore();
+    else if (cfS.tab === "progresiones") progs();
+    else if (cfS.tab === "adivina") guessView();
+    else quizView();
+  }
+
+  function explore() {
+    const k = cfS.k, sc = cfScale(k), ch = cfChords(k), sig = cfSignature(k);
+    const order = [3, 0, 4, 1, 5, 2, 6];
+    P().innerHTML = `
+    <section class="plain stack">
+      <div class="row wrap" style="gap:8px"><h3 style="flex:1">${cfKeyName(k)} mayor</h3><span class="pill" style="--tint:#6e6e6e">${sig.text}</span></div>
+      <div class="small">Su <b>relativo menor</b> es <b>${cfMinorName(k)} menor</b> (la casilla de dentro, el vi): usa las mismas notas.</div>
+      <div class="cf-scale">${sc.map(n => `<span style="--c:${cfNoteColor(n.L, false)}">${n.name}</span>`).join("")}</div>
+      <div class="row wrap"><button class="btn soft" id="cf-scale" style="--tint:#5856d6">${icon("speaker", 18)} Escala</button><button class="btn soft" id="cf-cad" style="--tint:#ff9500">${icon("play", 16)} I – IV – V – I</button><button class="btn soft" id="cf-all" style="--tint:#34c759">${icon("play", 16)} Los 7 acordes</button></div>
+    </section>
+    <div class="section-title">Los acordes del agrupador (toca para oírlos)</div>
+    <div class="cf-grid">${order.map(d => chordBtn(ch[d])).join("")}</div>
+    <section class="card stack" style="--tint:#6e6e6e">
+      <b>Cómo se usa</b>
+      <div class="small">Cada casilla hacia la <b>derecha</b> sube una quinta (Do → Sol → Re…) y añade un sostenido. Hacia la <b>izquierda</b> baja una quinta y añade un bemol.</div>
+      <div class="small">Lo que queda dentro del agrupador son los 7 acordes que «suenan bien juntos» en la tonalidad: fuera los mayores (<b>IV · I · V</b>), dentro los menores (<b>ii · vi · iii</b>) y el <b>vii°</b>, que es disminuido aunque esté en la casilla de un menor.</div>
+      <div class="small">Truco: los acordes que están juntos en el círculo pasan de uno a otro con suavidad. Por eso casi todas las canciones se mueven dentro del agrupador.</div>
+    </section>`;
+    P().querySelectorAll("[data-cd]").forEach(b => b.onclick = () => cfPlay(ch[+b.dataset.cd]));
+    document.getElementById("cf-scale").onclick = () => { const c = ac(); let base = 60 + sc[0].pc; if (base > 66) base -= 12; sc.concat([{ pc: sc[0].pc }]).forEach((n, i) => { let m = base + cfMod(n.pc - sc[0].pc); if (i === 7) m = base + 12; tone(m, c.currentTime + .05 + i * .32, .4); }); };
+    document.getElementById("cf-cad").onclick = () => runSeq([0, 3, 4, 0], 96, false);
+    document.getElementById("cf-all").onclick = () => runSeq([0, 1, 2, 3, 4, 5, 6, 0], 110, false);
+  }
+
+  function runSeq(degs, bpm, loop, onStep) {
+    stopSeq(); const ch = cfChords(cfS.k), bar = 60 / bpm * (degs.length > 8 ? 4 : 2);
+    let i = 0; seq = {};
+    const tick = () => {
+      if (!seq) return;
+      if (i >= degs.length) { if (loop) i = 0; else { stopSeq(); return; } }
+      const c = ch[degs[i]]; playMidi([c.bass, ...c.midi], bar * .95); cfHighlight(c.ring, c.idx); onStep && onStep(i);
+      i++; seq.t = setTimeout(tick, bar * 1000);
+    };
+    tick();
+  }
+
+  function progs() {
+    const pr = CF_PROGS.find(p => p.id === cfS.prog) || CF_PROGS[0], ch = cfChords(cfS.k);
+    P().innerHTML = `
+    <div class="chips" id="cf-plist">${CF_PROGS.map(p => `<button data-p="${p.id}" class="${p.id === pr.id ? "on" : ""}">${p.name}</button>`).join("")}</div>
+    <section class="plain stack">
+      <div class="row wrap" style="gap:8px"><h3 style="flex:1">${pr.name}</h3><span class="pill">${pr.style}</span></div>
+      <div class="small muted">${pr.tip}</div>
+      <div class="cf-boxes ${pr.deg.length > 8 ? "blues" : ""}">${pr.deg.map((d, i) => `<button class="cf-box" data-b="${i}" style="--c:${ch[d].color}"><span>${ch[d].roman}</span><b>${ch[d].name}</b></button>`).join("")}</div>
+      <div class="slider-row small"><span>Lento</span><input type="range" id="cf-tempo" min="50" max="140" value="${cfS.tempo}" style="accent-color:var(--accent)"><span>Rápido</span><b class="num" id="cf-bpm" style="min-width:64px;text-align:right">${cfS.tempo} ppm</b></div>
+      <div class="row wrap"><button class="btn" id="cf-pplay" style="--tint:#5856d6">${icon("play", 18)} Escuchar</button>
+        <label class="row small" style="gap:6px"><input type="checkbox" id="cf-loop" ${cfS.loop ? "checked" : ""}> Repetir</label>
+        <span class="spacer"></span><button class="btn soft" id="cf-pdl" style="--tint:#007aff">${icon("download", 16)} MusicXML</button></div>
+    </section>
+    <section class="card stack" style="--tint:#34c759"><b>Tócala tú</b>
+      <div class="small">1. Escúchala mirando cómo salta la luz por el círculo.<br>2. Toca solo la nota grave de cada acorde con la mano izquierda, contando ${pr.deg.length > 8 ? "4" : "2"} tiempos.<br>3. Añade el acorde con la derecha (toca las cajas para ver las teclas en «Explorar»).<br>4. Gira el agrupador y tócala en otra tonalidad: los números romanos no cambian.</div></section>`;
+    P().querySelectorAll("[data-p]").forEach(b => b.onclick = () => { cfS.prog = b.dataset.p; cfSave(); stopSeq(); progs(); });
+    P().querySelectorAll("[data-b]").forEach(b => b.onclick = () => cfPlay(ch[pr.deg[+b.dataset.b]]));
+    const tempo = document.getElementById("cf-tempo");
+    tempo.oninput = () => { cfS.tempo = +tempo.value; document.getElementById("cf-bpm").textContent = cfS.tempo + " ppm"; };
+    tempo.onchange = () => { cfSave(); if (seq) play(); };
+    document.getElementById("cf-loop").onchange = e => { cfS.loop = e.target.checked; cfSave(); };
+    const play = () => {
+      runSeq(pr.deg, cfS.tempo, cfS.loop, i => { P().querySelectorAll(".cf-box").forEach((b, j) => b.classList.toggle("on", j === i)); });
+      document.getElementById("cf-pplay").innerHTML = `${icon("stop", 18)} Parar`;
+    };
+    document.getElementById("cf-pplay").onclick = () => seq ? stopSeq() : play();
+    document.getElementById("cf-pdl").onclick = () => {
+      const xml = cfProgXML(pr, cfS.k), name = `${pr.name} en ${cfKeyName(cfS.k)}`.replace(/[^\wÀ-ÿ♯♭ –-]/g, "");
+      const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([xml], { type: "application/vnd.recordare.musicxml+xml" }));
+      a.download = name + ".musicxml"; document.body.appendChild(a); a.click(); a.remove(); toast("Ábrelo en MuseScore");
+    };
+  }
+
+  function guessView() {
+    const lv = cfLocked(cfS.level) ? 0 : cfS.level, L = CF_LEVELS[lv];
+    if (lv < 2 && (guess.target == null || guess.answered)) guess.key = cfS.k;
+    const ch = cfChords(guess.key);
+    P().innerHTML = `
+    <div class="seg" id="cf-lv">${CF_LEVELS.map((l, i) => `<button data-l="${i}" class="${i === lv ? "on" : ""}">${l.name}${l.premium && !premium ? " 🔒" : ""}</button>`).join("")}</div>
+    <div class="tiny muted" style="text-align:center">${L.desc}${lv < 2 ? ` · en ${cfKeyName(guess.key)} mayor (gira el agrupador para cambiar)` : ""}</div>
+    <div class="row" style="justify-content:center;gap:10px"><button class="btn big" id="cf-listen" style="--tint:#ff9500">${icon("speaker", 20)} Escuchar</button>${guess.target != null ? `<button class="btn soft" id="cf-again" style="--tint:#ff9500">Repetir</button>` : ""}</div>
+    <div class="msg" style="font-size:1.1rem">${guess.fb}</div>
+    <div class="cf-answers">${L.deg.map(d => `<button data-g="${d}" style="--c:${ch[d].color}"><b>${ch[d].roman}</b><span class="tiny">${ch[d].name}</span></button>`).join("")}</div>
+    <div class="muted num" style="text-align:center">Aciertos ${guess.ok}/${guess.total}</div>
+    <div class="card small" style="--tint:#ff9500">Pista: el <b>V</b> suena con ganas de volver a casa; el <b>IV</b> suena abierto, como «alejándose»; los menores (ii, iii, vi) suenan más tristes.</div>`;
+    P().querySelectorAll("[data-l]").forEach(b => b.onclick = () => {
+      const i = +b.dataset.l; if (cfLocked(i)) { toast("Los niveles Medio y Difícil vienen con Premium"); go("premium"); return; }
+      cfS.level = i; cfSave(); guess.target = null; guess.fb = "Pulsa «Escuchar»."; guessView();
+    });
+    const hear = () => { const c = ac(), I = ch[0], X = ch[guess.target]; [I.bass, ...I.midi].forEach(m => tone(m, c.currentTime + .02, 1)); [X.bass, ...X.midi].forEach(m => tone(m, c.currentTime + 1.2, 1.3)); cfHighlight(null); };
+    document.getElementById("cf-listen").onclick = () => {
+      if (guess.target == null || guess.answered) {
+        if (lv === 2) { guess.key = Math.floor(Math.random() * 12); if (guess.key !== cfS.k) { cfS.k = guess.key; cfRotateTo(cfS.k); cfMarkKey(); header(); } }
+        else guess.key = cfS.k;
+        const pool = L.deg.filter(d => d !== guess.target || L.deg.length < 2); guess.target = pool[Math.floor(Math.random() * pool.length)]; guess.answered = false;
+        guess.fb = "¿Qué acorde es el segundo?"; guessView(); hear();
+      } else hear();
+    };
+    const again = document.getElementById("cf-again"); if (again) again.onclick = hear;
+    P().querySelectorAll("[data-g]").forEach(b => b.onclick = () => {
+      const d = +b.dataset.g; if (guess.target == null) { cfPlay(ch[d]); return; }
+      if (guess.answered) { cfPlay(ch[d]); return; }
+      guess.total++; guess.answered = true; const t = ch[guess.target];
+      if (d === guess.target) { guess.ok++; guess.fb = `<span style="color:var(--ok)">✓ ¡Sí! Era el ${t.roman}: ${t.name}.</span>`; }
+      else guess.fb = `<span style="color:#ff3b30">✗ Era el ${t.roman}: ${t.name}.</span>`;
+      guess.fb += ` <span class="small muted">Pulsa «Escuchar» para el siguiente.</span>`;
+      guessView(); cfPlay(t);
+    });
+  }
+
+  // Preguntas de teoría: se contestan con botones o tocando la casilla en el círculo
+  function newQuestion() {
+    const keys = cfS.quizAll && premium ? [...Array(12).keys()] : CF_EASY_KEYS;
+    const types = cfS.quizAll && premium ? ["V", "IV", "rel", "sig", "ii", "vi", "iii", "vii", "fromrel"] : ["V", "IV", "rel"];
+    let k, type; do { k = keys[Math.floor(Math.random() * keys.length)]; type = types[Math.floor(Math.random() * types.length)]; } while (quiz.q && quiz.q.k === k && quiz.q.type === type);
+    const ch = cfChords(k), DEG = { V: 4, IV: 3, ii: 1, vi: 5, iii: 2, vii: 6 };
+    let text, answer, ring, idx;
+    if (type === "rel") { text = `¿Cuál es el relativo menor de <b>${cfKeyName(k)} mayor</b>?`; answer = cfMinorName(k) + " menor"; ring = "i"; idx = k; }
+    else if (type === "fromrel") { text = `¿De qué tonalidad mayor es relativo <b>${cfMinorName(k)} menor</b>?`; answer = cfKeyName(k) + " mayor"; ring = "o"; idx = k; }
+    else if (type === "sig") { const sg = cfSignature(k); text = `¿Qué tonalidad mayor tiene <b>${k === 0 ? "ninguna alteración" : sg.n + " " + (sg.sign === "♯" ? (sg.n > 1 ? "sostenidos" : "sostenido") : (sg.n > 1 ? "bemoles" : "bemol"))}</b>?`; answer = cfKeyName(k) + " mayor"; ring = "o"; idx = k; }
+    else { const c = ch[DEG[type]]; text = `En <b>${cfKeyName(k)} mayor</b>, ¿qué acorde es el <b>${c.roman}</b>?`; answer = c.name; ring = c.ring; idx = c.idx; }
+    // Opciones: la buena y tres más (otros acordes de la tonalidad, o casillas vecinas del círculo)
+    const pool = new Set([answer]);
+    if (DEG[type] != null) { const others = ch.filter(c => c.name !== answer).sort(() => Math.random() - .5); others.slice(0, 3).forEach(c => pool.add(c.name)); }
+    else {
+      const name = i => type === "rel" ? cfMinorName(i) + " menor" : cfKeyName(i) + " mayor";
+      const offs = [-1, 1, -2, 2, 3, -3, 6].sort(() => Math.random() - .5);
+      for (const o of offs) { if (pool.size >= 4) break; pool.add(name(cfMod(k + o))); }
+    }
+    quiz.q = { k, type, text, answer, ring, idx, opts: [...pool].sort(() => Math.random() - .5), done: false };
+    quiz.fb = "Contesta con un botón o tocando la casilla en el círculo.";
+  }
+  function quizAnswer(ok) {
+    const q = quiz.q; if (!q || q.done) return; q.done = true; quiz.total++;
+    if (ok) { quiz.ok++; quiz.fb = `<span style="color:var(--ok)">✓ ¡Correcto! ${q.answer}.</span>`; }
+    else quiz.fb = `<span style="color:#ff3b30">✗ Era ${q.answer}.</span>`;
+    quiz.fb += ` <span class="small muted">Mira el agrupador.</span>`;
+    cfS.k = q.k; cfRotateTo(q.k); cfMarkKey(); header(); cfHighlight(q.ring, q.idx);
+    quizView(true);
+  }
+  function quizAnswerBySector(ring, i) {
+    const q = quiz.q; if (!q || q.done) return;
+    quizAnswer(ring === q.ring && i === q.idx);
+  }
+  function quizView(keep) {
+    if (!quiz.q) newQuestion();
+    const q = quiz.q;
+    P().innerHTML = `
+    <label class="toggle plain" for="cf-qall"><span>Todas las tonalidades y preguntas${premium ? "" : " 🔒"}<br><span class="tiny muted">Gratis: tonalidades con hasta 2 alteraciones; V, IV y relativo menor.</span></span><input id="cf-qall" type="checkbox" ${cfS.quizAll && premium ? "checked" : ""}></label>
+    <section class="plain stack" style="text-align:center"><div class="cf-q">${q.text}</div><div class="msg" style="font-size:1.05rem;min-height:40px">${quiz.fb}</div></section>
+    <div class="answers cf-opts">${q.opts.map(o => `<button data-o="${esc(o)}" ${q.done && o === q.answer ? 'style="border-color:var(--ok);color:var(--ok)"' : ""}>${o}</button>`).join("")}</div>
+    ${q.done ? `<div class="row" style="justify-content:center"><button class="btn big" id="cf-next" style="--tint:#5856d6">Siguiente pregunta</button></div>` : ""}
+    <div class="muted num" style="text-align:center">Aciertos ${quiz.ok}/${quiz.total}</div>`;
+    document.getElementById("cf-qall").onchange = e => {
+      if (!premium) { e.target.checked = false; toast("Todas las tonalidades vienen con Premium"); go("premium"); return; }
+      cfS.quizAll = e.target.checked; cfSave(); quiz.q = null; quizView();
+    };
+    P().querySelectorAll("[data-o]").forEach(b => b.onclick = () => quizAnswer(b.dataset.o === q.answer));
+    const nx = document.getElementById("cf-next"); if (nx) nx.onclick = () => { newQuestion(); cfHighlight(null); quizView(); };
+  }
+
+  cfSetAngle(cfS.k * 30); cfMarkKey(); header(); panel();
+}
+
+// Progresión como MusicXML (acorde en la derecha, nota grave en la izquierda; para abrir en MuseScore)
+function cfProgXML(pr, k) {
+  const ch = cfChords(k), sig = cfSignature(k), fifths = sig.n ? (sig.sign === "♯" ? sig.n : -sig.n) : 0;
+  const STEP = ["C", "D", "E", "F", "G", "A", "B"], sc = cfScale(k);
+  const pitchXML = (L, a, oct) => `<pitch><step>${STEP[L]}</step>${a ? `<alter>${a}</alter>` : ""}<octave>${oct}</octave></pitch>`;
+  const noteOf = (deg, m) => { const n = sc[deg]; return { oct: Math.floor((m - CF_LPC[n.L] - n.a) / 12) - 1 }; };
+  const KIND = { M: "major", m: "minor", d: "diminished" };
+  let parts = "";
+  [1, 2].forEach(staffPart => {
+    parts += `  <part id="P${staffPart}">\n`;
+    pr.deg.forEach((d, i) => {
+      const c = ch[d];
+      parts += `    <measure number="${i + 1}">\n`;
+      if (i === 0) parts += `      <attributes><divisions>1</divisions><key><fifths>${fifths}</fifths></key><time><beats>4</beats><beat-type>4</beat-type></time><clef><sign>${staffPart === 1 ? "G" : "F"}</sign><line>${staffPart === 1 ? 2 : 4}</line></clef></attributes>\n`;
+      if (staffPart === 1) {
+        const r = sc[d]; parts += `      <harmony><root><root-step>${STEP[r.L]}</root-step>${r.a ? `<root-alter>${r.a}</root-alter>` : ""}</root><kind>${KIND[c.q]}</kind></harmony>\n`;
+        [0, 2, 4].forEach((o, j) => { const deg = (d + o) % 7; parts += `      <note>${j ? "<chord/>" : ""}${pitchXML(sc[deg].L, sc[deg].a, noteOf(deg, c.midi[j]).oct)}<duration>4</duration><type>whole</type></note>\n`; });
+      } else parts += `      <note>${pitchXML(sc[d].L, sc[d].a, noteOf(d, c.bass).oct)}<duration>4</duration><type>whole</type></note>\n`;
+      if (i === pr.deg.length - 1) parts += `      <barline location="right"><bar-style>light-heavy</bar-style></barline>\n`;
+      parts += `    </measure>\n`;
+    });
+    parts += `  </part>\n`;
+  });
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 4.0 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">
+<score-partwise version="4.0">
+  <work><work-title>${esc(pr.name)} en ${cfKeyName(k)} mayor</work-title></work>
+  <identification><creator type="composer">Piano Curso</creator></identification>
+  <part-list><score-part id="P1"><part-name>Mano derecha</part-name></score-part><score-part id="P2"><part-name>Mano izquierda</part-name></score-part></part-list>
+${parts}</score-partwise>
+`;
+}
+function circleBanner() {
+  return `<a class="cfbanner" href="#circulo"><span class="cf-mini" aria-hidden="true"></span><span style="flex:1;min-width:0"><h2>Círculo de quintas</h2><span class="small">Gira el agrupador, oye los acordes de cada tonalidad y practica progresiones.</span></span>${icon("chev", 20)}</a>`;
+}
+
 // ───────────────────────────── Premium (pago único de 2,99 €) ─────────────────────────────
 // Gratis: Fase 0 y Nivel 1. Premium: Niveles 2 y 3 y los niveles difíciles de los juegos.
 // Android (Google Play) y Windows (Microsoft Store) cobran con la Digital Goods API de cada tienda.
@@ -1060,11 +1524,12 @@ function viewPremium() {
   <section class="plain stack"><b>Qué desbloqueas</b>
     <div class="small row">${icon("lock", 16)} Niveles 2 y 3 de clásica, blues, jazz, pop, rock y Fundamentos</div>
     <div class="small row">${icon("notes", 16)} Sus ejercicios, acordes y partituras recomendadas</div>
-    <div class="small row">${icon("spark", 16)} Juegos: notas con líneas adicionales y ritmo con corcheas</div>
+    <div class="small row">${icon("spark", 16)} Juegos: notas con líneas adicionales, ritmo con corcheas y los niveles avanzados del círculo de quintas</div>
     <div class="small row">${icon("print", 16)} <span>Dos láminas A3 en PDF para imprimir: <a href="#laminas">tabla de acordes y póster de referencia</a></span></div></section>
   <section class="plain stack"><b>Siempre gratis</b>
     <div class="small row">${icon("check", 16)} Fase 0 y Nivel 1 de todos los estilos</div>
     <div class="small row">${icon("check", 16)} Plan diario, cronómetro, metrónomo y progreso</div>
+    <div class="small row">${icon("check", 16)} El círculo de quintas: acordes, progresiones y ejercicios fáciles</div>
     <div class="small row">${icon("check", 16)} Las partituras de IMSLP, MuseScore y Mutopia</div></section>
   ${premium ? `<div class="plain row" style="color:var(--ok);font-weight:700">${icon("check", 18)} Ya tienes Premium. ¡Gracias!</div>`
     : where === "store" ? `<div class="stack"><button class="btn big" id="p-buy" style="--tint:#ff9500">Desbloquear por ${PREMIUM.price}</button>
