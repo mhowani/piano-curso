@@ -531,6 +531,8 @@ const ICONS = {
   graduation: '<path d="M2 9l10-5 10 5-10 5zM6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5M22 9v6"/>',
   lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7.5a4 4 0 018 0V11"/>',
   crown: '<path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/>',
+  print: '<path d="M6 9V3h12v6M6 18H4.5A1.5 1.5 0 013 16.5v-6A1.5 1.5 0 014.5 9h15a1.5 1.5 0 011.5 1.5v6a1.5 1.5 0 01-1.5 1.5H18"/><rect x="6" y="14" width="12" height="7" rx="1"/>',
+  download: '<path d="M12 3v12M7.5 10.5L12 15l4.5-4.5M5 19h14"/>',
   mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5L12 13l8.5-6.5"/>',
 };
 function icon(name, size = 20, color) {
@@ -571,6 +573,7 @@ function route() {
   else if (h === "progreso") { tab = "progreso"; viewProgress(); }
   else if (h === "contacto") { tab = ""; viewContact(); }
   else if (h === "premium") { tab = "curso"; viewPremium(); }
+  else if (h === "laminas") { tab = "curso"; viewSheets(); }
   else viewToday();
   renderTabs(tab);
   window.scrollTo(0, 0);
@@ -619,6 +622,7 @@ function viewToday() {
       <select id="fav">${STYLE_IDS.filter(s => s !== "fundamentos").map(s => `<option value="${s}" ${s === S.favorite ? "selected" : ""}>${STYLES[s].name}</option>`).join("")}</select></label>
     ${S.level === 0 ? `<div class="small muted">Estás en la Fase 0: unas 13 horas para aprender el teclado, la lectura básica y tus primeras piezas. Los estilos empiezan en el Nivel 1.</div>` : ""}
   </section>
+  ${premium ? "" : sheetsPromo()}
   ${contactCard()}`;
   const slider = document.getElementById("slider");
   slider.addEventListener("input", () => { S.minutes = +slider.value; document.getElementById("mins").textContent = S.minutes; });
@@ -698,6 +702,7 @@ function viewCourse() {
   app.innerHTML = `<h1>Curso</h1>
   ${premiumCard()}
   <a class="chordlink" href="#acordes">${icon("keys", 30)}<div style="flex:1"><h3>Tabla de acordes</h3><div class="tiny" style="opacity:.9">12 tipos × 12 notas, para ver y escuchar</div></div>${icon("chev", 20)}</a>
+  ${sheetsLink()}
   <div class="styles">${STYLE_IDS.map(id => {
     const s = STYLES[id], all = lessonsOf(id), done = all.filter(l => isDone(l.id)).length;
     return `<a class="grad stile" href="#estilo-${id}" style="--c1:${s.c1};--c2:${s.c2}">
@@ -823,7 +828,8 @@ function viewChordTable() {
     <div class="chips" role="group" aria-label="Tipo de acorde">${QUALITIES.map((x, i) => `<button data-q="${i}" class="${x === q ? "on" : ""}">${x.id || "Mayor"}</button>`).join("")}</div>
     <div><h2>${q.name}</h2><div class="small muted">${q.family} · fórmula ${q.formula} semitonos</div></div>
     <div class="chordgrid">${Array.from({ length: 12 }, (_, r) => chordCard(chordFrom(r, q), "#5856d6", true)).join("")}</div>
-    <div class="small muted">Toca un acorde para oírlo. La C roja marca cada Do, como en tu tabla.</div>`;
+    <div class="small muted">Toca un acorde para oírlo. La C roja marca cada Do, como en tu tabla.</div>
+    ${sheetsLink()}`;
     app.querySelectorAll("[data-q]").forEach(b => b.onclick = () => { q = QUALITIES[+b.dataset.q]; draw(); });
   };
   draw();
@@ -1039,7 +1045,7 @@ function premiumCard() {
   if (premium) return `<div class="plain row"><span class="badge" style="--tint:#ff9500;width:38px;height:38px">${icon("crown", 18)}</span><span style="flex:1"><b>Premium activado</b><br><span class="tiny muted">Tienes todo el curso. ¡Gracias por apoyar Piano Curso!</span></span></div>`;
   return `<a class="plain row" href="#premium" style="text-decoration:none;color:inherit">
     <span class="badge" style="--tint:#ff9500;width:38px;height:38px">${icon("crown", 18)}</span>
-    <span style="flex:1;min-width:0"><b>Piano Curso Premium</b><br><span class="tiny muted">Niveles 2 y 3 de todos los estilos y juegos avanzados. Pago único.</span></span>
+    <span style="flex:1;min-width:0"><b>Piano Curso Premium</b><br><span class="tiny muted">Niveles 2 y 3, juegos avanzados y láminas A3 para imprimir. Pago único.</span></span>
     ${icon("chev", 18, "var(--muted)")}</a>`;
 }
 function viewPremium() {
@@ -1054,7 +1060,8 @@ function viewPremium() {
   <section class="plain stack"><b>Qué desbloqueas</b>
     <div class="small row">${icon("lock", 16)} Niveles 2 y 3 de clásica, blues, jazz, pop, rock y el tronco común</div>
     <div class="small row">${icon("notes", 16)} Sus ejercicios, acordes y partituras recomendadas</div>
-    <div class="small row">${icon("spark", 16)} Juegos: notas con líneas adicionales y ritmo con corcheas</div></section>
+    <div class="small row">${icon("spark", 16)} Juegos: notas con líneas adicionales y ritmo con corcheas</div>
+    <div class="small row">${icon("print", 16)} <span>Dos láminas A3 en PDF para imprimir: <a href="#laminas">tabla de acordes y póster de referencia</a></span></div></section>
   <section class="plain stack"><b>Siempre gratis</b>
     <div class="small row">${icon("check", 16)} Fase 0 y Nivel 1 de todos los estilos</div>
     <div class="small row">${icon("check", 16)} Plan diario, cronómetro, metrónomo y progreso</div>
@@ -1069,6 +1076,72 @@ function viewPremium() {
   const buy = document.getElementById("p-buy"), rest = document.getElementById("p-restore"), msg = document.getElementById("p-msg");
   if (buy) buy.onclick = async () => { buy.disabled = true; const ok = await buyPremium(); buy.disabled = false; if (ok) { toast("¡Premium desbloqueado!"); viewPremium(); } };
   if (rest) rest.onclick = async () => { rest.disabled = true; const ok = await checkPurchases(); rest.disabled = false; if (ok) viewPremium(); else msg.textContent = "No hay ninguna compra de Premium en esta cuenta."; };
+}
+// Láminas A3 (premium). En la web pública solo se ven las muestras con marca de agua:
+// los PDF están cifrados (laminas/*.bin) y la app los descifra al descargarlos con Premium.
+// Ojo: la clave está en este código, así que frena la descarga casual, no a alguien con conocimientos.
+const SHEETS_KEY = "k1bdyWr4Hc0vZmQpOTxITOda6WM6u73Hlh3wgh96wQ4=";
+const SHEETS = [
+  { id: "tabla-acordes", title: "Tabla de acordes para piano", file: "Tabla de acordes para piano (A3).pdf", c: "#5856d6",
+    desc: "Los 12 tipos de acorde en las 12 notas: mayor, menor, disminuido, aumentado, sextas, séptimas y novenas, cada uno dibujado en el teclado." },
+  { id: "poster-piano", title: "Póster de referencia de piano", file: "Póster de referencia de piano (A3).pdf", c: "#ff2d55",
+    desc: "Teclado completo con las notas en el pentagrama, símbolos, dinámicas, modos, escalas mayores y menores, círculo de quintas y progresiones de acordes." }
+];
+function sheetsPromo() {
+  return `<a class="plain stack" href="#laminas" style="text-decoration:none;color:inherit;gap:10px">
+    <div class="row" style="gap:8px"><span style="color:#ff9500;display:flex">${icon("print", 20)}</span><b style="flex:1">Nuevo en Premium: láminas A3 para imprimir</b>${icon("chev", 18, "var(--muted)")}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${SHEETS.map(sh => `<img src="laminas/${sh.id}-muestra.jpg" alt="${sh.title}" loading="lazy" width="900" height="636" style="width:100%;height:auto;border-radius:8px">`).join("")}</div>
+    <div class="tiny muted">Tabla de acordes y póster de referencia del piano, en PDF de alta calidad para colgar junto al piano.</div></a>`;
+}
+function sheetsLink() {
+  return `<a class="plain row" href="#laminas" style="text-decoration:none;color:inherit">
+    <span class="badge" style="--tint:#ff9500;width:38px;height:38px">${icon("print", 18)}</span>
+    <span style="flex:1;min-width:0"><b>Láminas A3 para imprimir</b>${premium ? "" : ` <span class="pill" style="--tint:#ff9500;display:inline-flex;gap:4px;align-items:center">${icon("crown", 12)} Premium</span>`}<br>
+    <span class="tiny muted">Tabla de acordes y póster de referencia para colgar junto al piano</span></span>${icon("chev", 18, "var(--muted)")}</a>`;
+}
+async function sheetBlob(sh) {
+  const raw = new Uint8Array(await (await fetch(`laminas/${sh.id}.bin`)).arrayBuffer());
+  const key = await crypto.subtle.importKey("raw", Uint8Array.from(atob(SHEETS_KEY), c => c.charCodeAt(0)), "AES-GCM", false, ["decrypt"]);
+  const pdf = await crypto.subtle.decrypt({ name: "AES-GCM", iv: raw.slice(0, 12) }, key, raw.slice(12));
+  return new Blob([pdf], { type: "application/pdf" });
+}
+function viewSheets() {
+  app.innerHTML = topbar("Láminas para imprimir", "curso") + `
+  <section class="grad stack" style="--c1:#ff9500;--c2:#ff2d55">
+    ${icon("print", 40)}<h1>Láminas A3 para imprimir</h1>
+    <div class="small">Dos láminas para colgar junto al piano y tenerlo todo a la vista mientras practicas. ${premium ? "Incluidas en tu Premium." : "Incluidas en Piano Curso Premium."}</div>
+  </section>
+  ${SHEETS.map(sh => `<section class="plain stack">
+    <h2 style="margin:0">${sh.title}</h2>
+    <img src="laminas/${sh.id}-muestra.jpg" alt="Vista previa: ${sh.title}" loading="lazy" width="900" height="636" style="width:100%;height:auto;border-radius:12px;border:1px solid var(--line, rgba(0,0,0,.1))">
+    <div class="small muted">${sh.desc}</div>
+    ${premium ? `<div class="row wrap"><button class="btn" data-sheet="${sh.id}" data-act="open" style="--tint:${sh.c}">${icon("print", 18)} Abrir para imprimir</button>
+      <button class="btn soft" data-sheet="${sh.id}" data-act="save" style="--tint:${sh.c}">${icon("download", 18)} Descargar PDF</button></div>`
+      : `<div class="tiny muted">Vista previa en baja resolución. El PDF A3 en alta calidad viene con Premium.</div>`}
+  </section>`).join("")}
+  ${premium ? `<section class="plain stack"><b>Cómo imprimirlas</b>
+    <div class="small">Tamaño de papel <b>A3</b>, orientación <b>horizontal</b> y escala <b>100 %</b> (tamaño real).</div>
+    <div class="small muted">¿Tu impresora solo llega a A4? Elige «Ajustar a la página» o llévalas en un USB a una copistería: imprimir en A3 a color cuesta poco.</div>
+    <div class="small muted" id="sh-msg" role="status"></div></section>`
+    : `<section class="plain stack" style="align-items:center;text-align:center">
+    <span style="color:#ff9500">${icon("lock", 36)}</span><b>Desbloquéalas con Premium</b>
+    <div class="small muted">Un solo pago de ${PREMIUM.price} y tienes los Niveles 2 y 3, los juegos avanzados y las dos láminas en PDF para imprimir.</div>
+    <a class="btn big" href="#premium" style="--tint:#ff9500;text-decoration:none">${icon("crown", 18)} Ver Premium</a></section>`}`;
+  app.querySelectorAll("[data-sheet]").forEach(b => b.onclick = async () => {
+    const sh = SHEETS.find(x => x.id === b.dataset.sheet), msg = document.getElementById("sh-msg");
+    const win = b.dataset.act === "open" ? window.open("", "_blank") : null; // se abre ya para que el navegador no lo bloquee
+    b.disabled = true;
+    try {
+      const url = URL.createObjectURL(await sheetBlob(sh));
+      if (win) win.location.href = url;
+      else { const a = document.createElement("a"); a.href = url; a.download = sh.file; document.body.appendChild(a); a.click(); a.remove(); toast("Descargando el PDF…"); }
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+    } catch (e) {
+      if (win) win.close();
+      if (msg) msg.textContent = "No se ha podido abrir la lámina. Comprueba tu conexión e inténtalo de nuevo.";
+    }
+    b.disabled = false;
+  });
 }
 function viewLocked(l) {
   const s = STYLES[l.style];

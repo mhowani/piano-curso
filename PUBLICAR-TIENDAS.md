@@ -96,7 +96,7 @@ Cambia lo que quieras, sube `VERSION` en `sw.js` (por ejemplo `piano-curso-v2`) 
 
 ## 5. Premium (pago único de 2,99 €)
 
-La app es **gratis** en las tres tiendas y Premium es una **compra dentro de la app** (no consumible: se paga una vez y dura para siempre). Gratis: Fase 0 y Nivel 1. Premium: Niveles 2 y 3, notas con líneas adicionales y ritmo con corcheas en los juegos.
+La app es **gratis** en las tres tiendas y Premium es una **compra dentro de la app** (no consumible: se paga una vez y dura para siempre). Gratis: Fase 0 y Nivel 1. Premium: Niveles 2 y 3, notas con líneas adicionales y ritmo con corcheas en los juegos, y las dos láminas A3 en PDF para imprimir (tabla de acordes y póster de referencia).
 
 Cada tienda cobra, se queda un 15 % (apúntate a los programas para pequeños desarrolladores) e ingresa el IVA de cada venta en el país del comprador. Tú recibes el resto en tu cuenta bancaria.
 
@@ -106,7 +106,7 @@ El código ya está hecho. En `fuente/app.html` (constante `PREMIUM`) solo hay q
 1. **Perfil de pagos**: Play Console › *Configuración › Perfil de pagos*. Rellena tu nombre, dirección, NIF y cuenta bancaria. Sin esto no deja crear productos.
 2. **Crear el producto**: tu app › *Monetizar › Productos › Productos integrados en la aplicación › Crear producto*:
    - ID de producto: `premium` (no se puede cambiar después).
-   - Nombre: `Piano Curso Premium`. Descripción: `Desbloquea los Niveles 2 y 3 y los juegos avanzados.`
+   - Nombre: `Piano Curso Premium`. Descripción: `Desbloquea los Niveles 2 y 3, los juegos avanzados y las láminas A3 para imprimir.`
    - Precio: **2,99 €** (Google calcula el resto de países). **Activar**.
 3. **Paquete con pagos**: al generar el paquete en PWABuilder (paso 1.2), en *All settings* activa **Google Play Billing**. Si no aparece esa opción, dímelo y lo genero con Bubblewrap (`"playBilling": { "enabled": true }`).
 4. **Confirmar las compras (obligatorio)**: Google devuelve el dinero si una compra no se confirma en 3 días, y eso necesita un pequeño servidor gratuito:
