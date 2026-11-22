@@ -192,6 +192,10 @@ const store = {
 };
 const S = Object.assign({ clef: "sol", level: "easy", names: "both", color: "after", sound: "on", game: "nombra" }, store.get("settings", {}));
 const save = () => store.set("settings", S);
+// Premium (se compra en Piano Curso › Premium): notas con líneas adicionales y ritmo con corcheas.
+const PREMIUM = (() => { try { return localStorage.getItem("pianocurso.premium") === "1"; } catch (e) { return false; } })();
+const PREMIUM_URL = "index.html#premium";
+if (!PREMIUM && S.level === "full") S.level = "easy";
 let stats = store.get("stats", {});   // { "sol30": [aciertos, fallos] }
 let records = store.get("records", {});
 
@@ -306,11 +310,12 @@ const OPTS = {
 function renderSettings() {
   Object.entries(OPTS).forEach(([k, opts]) => {
     const el = document.getElementById("set-" + k);
-    el.innerHTML = opts.map(([v, t]) => `<button type="button" id="opt-${k}-${v}" class="${S[k] === v ? "on" : ""}" data-k="${k}" data-v="${v}" aria-pressed="${S[k] === v}">${t}</button>`).join("");
+    el.innerHTML = opts.map(([v, t]) => `<button type="button" id="opt-${k}-${v}" class="${S[k] === v ? "on" : ""}" data-k="${k}" data-v="${v}" aria-pressed="${S[k] === v}">${t}${k === "level" && v === "full" && !PREMIUM ? " 🔒" : ""}</button>`).join("");
   });
 }
 document.querySelector(".settings").addEventListener("click", e => {
   const b = e.target.closest("button[data-k]"); if (!b) return;
+  if (b.dataset.k === "level" && b.dataset.v === "full" && !PREMIUM) { location.href = PREMIUM_URL; return; }
   S[b.dataset.k] = b.dataset.v; save(); renderSettings(); startGame();
 });
 
@@ -798,11 +803,11 @@ function makeBar(level) {
 
 // ───────── Juego: Ritmo (rítmico + auditivo) ─────────
 function gameRhythm() {
-  let level = store.get("rLevel", 1), bpm = store.get("rBpm", 70), bar = makeBar(level), state = "idle", t0 = 0, taps = [], raf = 0, timer = 0, alive = true, good = 0, rounds = 0;
+  let level = Math.min(store.get("rLevel", 1), PREMIUM ? 3 : 2), bpm = store.get("rBpm", 70), bar = makeBar(level), state = "idle", t0 = 0, taps = [], raf = 0, timer = 0, alive = true, good = 0, rounds = 0;
   stage.innerHTML = `
     <div class="stage-head"><h2>Ritmo</h2><div class="stats num"><span>Compases perfectos <b id="st-ok">0</b> / <b id="st-total">0</b></span></div></div>
     <p class="muted small" style="margin:0">Lee el ritmo, escúchalo y luego tócalo pulsando el botón grande (o la barra espaciadora) a tiempo con el metrónomo. Antes suenan 4 clics para contar «1, 2, 3, 4».</p>
-    <div class="seg" id="r-level"><button type="button" data-l="1" id="rl-1">Negras y blancas</button><button type="button" data-l="2" id="rl-2">+ Silencios</button><button type="button" data-l="3" id="rl-3">+ Corcheas</button></div>
+    <div class="seg" id="r-level"><button type="button" data-l="1" id="rl-1">Negras y blancas</button><button type="button" data-l="2" id="rl-2">+ Silencios</button><button type="button" data-l="3" id="rl-3">+ Corcheas${PREMIUM ? "" : " 🔒"}</button></div>
     <div class="tempo"><label for="r-bpm">Tempo</label><input type="range" id="r-bpm" min="50" max="120" step="5" value="${bpm}"><span class="num" id="r-bpm-v">${bpm} ppm</span></div>
     <div id="r-score"></div>
     <div class="legend-r"><span>𝅘𝅥 negra = 1 pulso</span><span>𝅗𝅥 blanca = 2 pulsos</span><span>𝄽 silencio = 1 pulso callado</span><span>♫ corcheas = 2 en 1 pulso</span></div>
@@ -868,7 +873,7 @@ function gameRhythm() {
   stage.querySelector("#btn-listen").addEventListener("click", listen);
   stage.querySelector("#btn-play").addEventListener("click", start);
   stage.querySelector("#btn-new").addEventListener("click", () => { if (state !== "idle") return; bar = makeBar(level); draw(); fb.className = "feedback"; fb.innerHTML = `<span class="muted">Ritmo nuevo. Escúchalo o tócalo.</span>`; });
-  stage.querySelector("#r-level").addEventListener("click", e => { const x = e.target.closest("button"); if (!x || state !== "idle") return; level = +x.dataset.l; store.set("rLevel", level); setLevel(); bar = makeBar(level); draw(); });
+  stage.querySelector("#r-level").addEventListener("click", e => { const x = e.target.closest("button"); if (!x || state !== "idle") return; if (+x.dataset.l === 3 && !PREMIUM) { location.href = PREMIUM_URL; return; } level = +x.dataset.l; store.set("rLevel", level); setLevel(); bar = makeBar(level); draw(); });
   const sl = stage.querySelector("#r-bpm");
   sl.addEventListener("input", () => { if (state !== "idle") { sl.value = bpm; return; } bpm = +sl.value; store.set("rBpm", bpm); stage.querySelector("#r-bpm-v").textContent = bpm + " ppm"; });
   keyHandler = e => { if (e.key === " " || e.code === "Space") { e.preventDefault(); if (!e.repeat) { if (state === "idle") start(); else tap(); } } };
