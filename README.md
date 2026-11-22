@@ -12,6 +12,10 @@ Todo está en un solo archivo, `index.html`, sin servidor ni dependencias. El pr
 
 La web es una PWA (`site.webmanifest`, `sw.js`, `pwa.js`): se puede instalar desde el navegador y funciona sin conexión. Para Google Play y Microsoft Store se empaqueta con PWABuilder; los pasos están en [PUBLICAR-TIENDAS.md](PUBLICAR-TIENDAS.md). Al cambiar la web, sube `VERSION` en `sw.js`.
 
+## Premium
+
+Gratis: Fase 0 y Nivel 1. Premium (pago único de 2,99 €): Niveles 2 y 3 y los juegos avanzados. Se compra dentro de las apps de Google Play y Microsoft Store con la Digital Goods API; en la web normal es una demo gratuita. El código está en `fuente/app.html` (constante `PREMIUM`), `fuente/premium-worker.js` confirma las compras de Google Play y los pasos están en [PUBLICAR-TIENDAS.md](PUBLICAR-TIENDAS.md#5-premium-pago-único-de-299-).
+
 ## Publicar con GitHub Pages
 
 Settings › Pages › Source: *Deploy from a branch*, rama `main`, carpeta `/ (root)`. La web queda en `https://<usuario>.github.io/piano-curso/`.

@@ -93,3 +93,44 @@ Envía. La revisión suele tardar entre unas horas y 3 días.
 
 ## 4. Al actualizar la web
 Cambia lo que quieras, sube `VERSION` en `sw.js` (por ejemplo `piano-curso-v2`) y publica en `main`. Las apps de las tiendas cogen los cambios solas la siguiente vez que se abren con conexión.
+
+## 5. Premium (pago único de 2,99 €)
+
+La app es **gratis** en las tres tiendas y Premium es una **compra dentro de la app** (no consumible: se paga una vez y dura para siempre). Gratis: Fase 0 y Nivel 1. Premium: Niveles 2 y 3, notas con líneas adicionales y ritmo con corcheas en los juegos.
+
+Cada tienda cobra, se queda un 15 % (apúntate a los programas para pequeños desarrolladores) e ingresa el IVA de cada venta en el país del comprador. Tú recibes el resto en tu cuenta bancaria.
+
+El código ya está hecho. En `fuente/app.html` (constante `PREMIUM`) solo hay que rellenar los datos de cada tienda cuando los tengas, y regenerar con `fuente/build.py`. En la web normal (sin tienda) Premium no se puede comprar: es una demo gratuita que enseña dónde descargar la app.
+
+### 5.1 Google Play
+1. **Perfil de pagos**: Play Console › *Configuración › Perfil de pagos*. Rellena tu nombre, dirección, NIF y cuenta bancaria. Sin esto no deja crear productos.
+2. **Crear el producto**: tu app › *Monetizar › Productos › Productos integrados en la aplicación › Crear producto*:
+   - ID de producto: `premium` (no se puede cambiar después).
+   - Nombre: `Piano Curso Premium`. Descripción: `Desbloquea los Niveles 2 y 3 y los juegos avanzados.`
+   - Precio: **2,99 €** (Google calcula el resto de países). **Activar**.
+3. **Paquete con pagos**: al generar el paquete en PWABuilder (paso 1.2), en *All settings* activa **Google Play Billing**. Si no aparece esa opción, dímelo y lo genero con Bubblewrap (`"playBilling": { "enabled": true }`).
+4. **Confirmar las compras (obligatorio)**: Google devuelve el dinero si una compra no se confirma en 3 días, y eso necesita un pequeño servidor gratuito:
+   1. En <https://console.cloud.google.com> crea un proyecto, activa la **Google Play Android Developer API** y crea una **cuenta de servicio** › *Claves › Añadir clave › JSON*. Se descarga un archivo: no lo compartas con nadie.
+   2. En Play Console › *Usuarios y permisos › Invitar usuario*, pega el correo de esa cuenta de servicio y dale el permiso **Ver datos financieros, pedidos y respuestas a encuestas de cancelación** y **Gestionar pedidos y suscripciones** solo para Piano Curso.
+   3. En <https://dash.cloudflare.com> (cuenta gratis) › *Workers & Pages › Create › Worker*, pega el contenido de `fuente/premium-worker.js` y despliega.
+   4. En el Worker › *Settings › Variables and Secrets*: secreto `GOOGLE_SA` con todo el texto del JSON, y texto `PACKAGE_NAME` = `io.github.mhowani.pianocurso`.
+   5. Copia la dirección del Worker (`https://….workers.dev`) en `PREMIUM.ackURL` de `fuente/app.html`.
+5. **Probar**: Play Console › *Configuración › Pruebas de licencias* › añade tu Gmail. Con esa cuenta las compras de la prueba cerrada no se cobran.
+
+### 5.2 Microsoft Store
+1. Partner Center › *Configuración de la cuenta › Perfil de pago* y *Perfil fiscal* (formulario W-8BEN: residente en España, con tu NIF). Sin ellos no te pagan.
+2. Tu app › *Complementos › Crear complemento* › tipo **Duradero**, ID `premium`. Duración: **para siempre**. Precio **2,99 €**. Nombre y descripción como en Google. Envíalo a certificación.
+3. Copia el **Store ID** del complemento (empieza por `9…`) en `PREMIUM.microsoft.sku` de `fuente/app.html`.
+4. Microsoft no exige servidor para confirmar la compra: la app la comprueba sola con la tienda.
+
+### 5.3 App Store (iPhone, iPad y Mac)
+Los pasos están en el `LEEME.md` de la app de Xcode: producto no consumible `com.ruben.pianocurso.premium` a 2,99 €, acuerdo de apps de pago y *App Store Small Business Program*.
+
+### 5.4 Enlaces de la web
+Cuando las apps estén publicadas, pon sus direcciones en `PREMIUM.links` de `fuente/app.html` y la web demo enseñará los botones para descargarlas. Dentro de la app de Android no se muestran: Google no permite enlazar a otras formas de pago.
+
+### 5.5 Lo que te toca en España
+- **Alta de autónomo** (Seguridad Social, sistema RETA, y Hacienda con el modelo 036/037) antes de empezar a cobrar de forma habitual. El primer año hay tarifa plana de unos 80 € al mes.
+- **Declarar** los ingresos en el IRPF (pago fraccionado trimestral, modelo 130). Las tiendas actúan como intermediario y te mandan facturas mensuales de su comisión. Un gestor suele costar entre 40 y 60 € al mes y te lo lleva todo.
+- **Política de privacidad y aviso legal** con tu nombre completo, NIF y un correo de contacto (lo exige la LSSI en cuanto la web o la app tienen actividad económica). Pásame esos datos y los añado a `privacidad.html` y a la app.
+- La política de privacidad tiene que decir que las compras las gestiona cada tienda y que el servidor de Google Play recibe solo el código de la compra, sin datos personales.
