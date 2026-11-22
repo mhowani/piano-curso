@@ -69,11 +69,11 @@ MANUAL = {
         ]),
         ("hoy", "Hoy: tu sesión diaria", [
             ("p", "La sesión se reparte sola: **25 % solfeo, 25 % técnica, 38 % repertorio y 12 % juego libre**. Por debajo de 20 minutos no hay juego libre. Debajo del deslizador verás cuántas semanas te quedan para terminar el nivel practicando 5 días por semana."),
-            ("p", "El repertorio cambia de estilo cada día: lunes y jueves clásica, martes blues, miércoles pop, viernes jazz o rock (alternos) y el fin de semana tu **estilo favorito**, que eliges al final de la pantalla. En la Fase 0 todo es del tronco común."),
+            ("p", "El repertorio cambia de estilo cada día: lunes y jueves clásica, martes blues, miércoles pop, viernes jazz o rock (alternos) y el fin de semana tu **estilo favorito**, que eliges al final de la pantalla. En la Fase 0 todo es de **Fundamentos**."),
             ("p", "Cuando completes las horas de un nivel, cambia tu nivel en **Tu nivel**. El contador de horas del nuevo nivel empieza de cero."),
         ]),
         ("curso", "Curso: el camino por estilos", [
-            ("p", "En **Curso** están el tronco común (solfeo y técnica para todos) y las rutas de clásica, blues, jazz, pop y rock. Cada ruta es un camino con hitos numerados (0, 1, 2 y 3) y paradas que son las lecciones. La lección marcada como **SIGUIENTE** es la que te toca."),
+            ("p", "En **Curso** están **Fundamentos** (solfeo y técnica, la base para todos los estilos) y las rutas de clásica, blues, jazz, pop y rock. Cada ruta es un camino con hitos numerados (0, 1, 2 y 3) y paradas que son las lecciones. La lección marcada como **SIGUIENTE** es la que te toca."),
             ("p", "Dentro de una lección:"),
             ("ul", [
                 "Toca cada **paso** cuando lo hayas hecho; la barra muestra cuántos llevas.",
